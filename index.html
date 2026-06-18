@@ -1,1 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Track Player</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #0d0e12;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            overflow: hidden;
+        }
+        /* Контейнер плеера */
+        .player-card {
+            background: linear-gradient(145deg, #14161d, #1b1e26);
+            border: 2px solid #57f287; /* Зеленый неон в цвет кнопки на скрине */
+            box-shadow: 0 0 20px rgba(87, 242, 135, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            width: 350px;
+            text-align: center;
+        }
+        .title {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            color: #57f287;
+        }
+        .subtitle {
+            font-size: 0.8rem;
+            color: #8a8f98;
+            margin-bottom: 25px;
+        }
+        /* Кнопка управления */
+        .controls {
+            margin-bottom: 25px;
+        }
+        .play-btn {
+            background-color: #57f287;
+            color: #0d0e12;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(87, 242, 135, 0.4);
+        }
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 25px rgba(87, 242, 135, 0.6);
+        }
+        /* Прогресс-бар */
+        .progress-container {
+            background-color: #2c2f36;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            height: 6px;
+            width: 100%;
+            position: relative;
+        }
+        .progress {
+            background-color: #57f287;
+            border-radius: 5px;
+            height: 100%;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #8a8f98;
+        }
+    </style>
+</head>
+<body>
 
+    <div class="player-card">
+        <div class="title">WELCOME</div>
+        <div class="subtitle">SYSTEM DEVIATION ACTIVE</div>
+
+        <audio id="audio" src="https://cdn11.deliciousoranges.com/s1/get/music/20250711/Creepy_Nuts_-_Mirage_79280769.mp3"></audio>
+
+        <div class="controls">
+            <button class="play-btn" id="playBtn">PLAY</button>
+        </div>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress" id="progress"></div>
+        </div>
+
+        <div class="time-info">
+            <span id="currentTime">0:00</span>
+            <span id="duration">0:00</span>
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('playBtn');
+        const progress = document.getElementById('progress');
+        const progressContainer = document.getElementById('progressContainer');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+
+        // Функция воспроизведения/паузы
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                playBtn.innerText = 'PAUSE';
+                playBtn.style.backgroundColor = '#ff4757'; /* Меняем цвет на красный при паузе */
+                playBtn.style.boxShadow = '0 4px 15px rgba(255, 71, 87, 0.4)';
+            } else {
+                audio.pause();
+                playBtn.innerText = 'PLAY';
+                playBtn.style.backgroundColor = '#57f287';
+                playBtn.style.boxShadow = '0 4px 15px rgba(87, 242, 135, 0.4)';
+            }
+        }
+
+        // Обновление таймера и полосы прогресса
+        function updateProgress(e) {
+            const { duration, currentTime } = e.srcElement;
+            if (!duration) return;
+            
+            const progressPercent = (currentTime / duration) * 100;
+            progress.style.width = `${progressPercent}%`;
+
+            // Форматирование времени
+            const formatTime = (time) => Math.floor(time / 60) + ':' + String(Math.floor(time % 60)).padStart(2, '0');
+            currentTimeEl.innerText = formatTime(currentTime);
+            durationEl.innerText = formatTime(duration);
+        }
+
+        // Перемотка трека кликом по полосе
+        function setProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            audio.currentTime = (clickX / width) * duration;
+        }
+
+        // Автоматический запуск (Важно: современные браузеры требуют клика от пользователя перед включением звука)
+        window.addEventListener('click', () => {
+            if (audio.paused && playBtn.innerText === 'PLAY') {
+                // Можно раскомментировать строку ниже для автоплея при первом клике по экрану
+                // togglePlay(); 
+            }
+        }, { once: true });
+
+        playBtn.addEventListener('click', togglePlay);
+        audio.addEventListener('timeupdate', updateProgress);
+        audio.addEventListener('loadedmetadata', updateProgress);
+        progressContainer.addEventListener('click', setProgress);
+    </script>
+</body>
+</html>
