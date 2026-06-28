@@ -19,17 +19,33 @@
             height: 100vh;
             color: #fff;
             overflow: hidden;
+            position: relative;
+        }
+
+        /* Canvas визуализатора — на весь экран позади плеера */
+        #visualizer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.75;
+            pointer-events: none;
         }
 
         /* Контейнер плеера */
         .player-card {
-            background: linear-gradient(145deg, #14161d, #1b1e26);
+            background: linear-gradient(145deg, rgba(20, 22, 29, 0.92), rgba(27, 30, 38, 0.92));
             border: 2px solid #57f287;
-            box-shadow: 0 0 20px rgba(87, 242, 135, 0.2);
+            box-shadow: 0 0 20px rgba(87, 242, 135, 0.3);
             border-radius: 12px;
             padding: 30px;
             width: 380px;
             text-align: center;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(6px);
         }
         .title {
             font-size: 1.2rem;
@@ -46,7 +62,7 @@
 
         /* Список треков */
         .track-list {
-            background: #1b1e26;
+            background: rgba(27, 30, 38, 0.85);
             border: 1px solid #2c2f36;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -54,16 +70,9 @@
             overflow-y: auto;
             text-align: left;
         }
-        .track-list::-webkit-scrollbar {
-            width: 4px;
-        }
-        .track-list::-webkit-scrollbar-track {
-            background: #1b1e26;
-        }
-        .track-list::-webkit-scrollbar-thumb {
-            background: #57f287;
-            border-radius: 2px;
-        }
+        .track-list::-webkit-scrollbar { width: 4px; }
+        .track-list::-webkit-scrollbar-track { background: #1b1e26; }
+        .track-list::-webkit-scrollbar-thumb { background: #57f287; border-radius: 2px; }
         .track-item {
             padding: 10px 15px;
             cursor: pointer;
@@ -75,23 +84,14 @@
             align-items: center;
             gap: 10px;
         }
-        .track-item:last-child {
-            border-bottom: none;
-        }
-        .track-item:hover {
-            background: #2c2f36;
-            color: #fff;
-        }
+        .track-item:last-child { border-bottom: none; }
+        .track-item:hover { background: #2c2f36; color: #fff; }
         .track-item.active {
             background: rgba(87, 242, 135, 0.1);
             color: #57f287;
             border-left: 3px solid #57f287;
         }
-        .track-item .track-number {
-            font-size: 0.7rem;
-            opacity: 0.5;
-            min-width: 20px;
-        }
+        .track-item .track-number { font-size: 0.7rem; opacity: 0.5; min-width: 20px; }
         .track-item .track-name {
             flex: 1;
             white-space: nowrap;
@@ -99,10 +99,7 @@
             text-overflow: ellipsis;
         }
 
-        /* Кнопка управления */
-        .controls {
-            margin-bottom: 20px;
-        }
+        .controls { margin-bottom: 20px; }
         .play-btn {
             background-color: #57f287;
             color: #0d0e12;
@@ -122,7 +119,6 @@
             box-shadow: 0 4px 25px rgba(87, 242, 135, 0.6);
         }
 
-        /* Прогресс-бар */
         .progress-container {
             background-color: #2c2f36;
             border-radius: 5px;
@@ -147,18 +143,13 @@
             margin-bottom: 20px;
         }
 
-        /* Громкость */
         .volume-section {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-bottom: 15px;
         }
-        .volume-icon {
-            font-size: 1rem;
-            color: #57f287;
-            min-width: 20px;
-        }
+        .volume-icon { font-size: 1rem; color: #57f287; min-width: 20px; }
         .volume-slider-container {
             flex: 1;
             position: relative;
@@ -181,7 +172,6 @@
             text-align: right;
         }
 
-        /* Навигация треков */
         .nav-buttons {
             display: flex;
             justify-content: center;
@@ -212,27 +202,26 @@
 </head>
 <body>
 
+    <!-- Canvas для визуализации звука -->
+    <canvas id="visualizer"></canvas>
+
     <div class="player-card">
         <div class="title">WELCOME NAHUI</div>
         <div class="subtitle" id="trackSubtitle">CHILL</div>
 
-        <!-- Список треков -->
         <div class="track-list" id="trackList"></div>
 
-        <!-- Навигация -->
         <div class="nav-buttons">
             <button class="nav-btn" id="prevBtn" title="Предыдущий">◄</button>
             <button class="nav-btn" id="nextBtn" title="Следующий">►</button>
         </div>
 
-        <audio id="audio"></audio>
+        <audio id="audio" crossorigin="anonymous"></audio>
 
-        <!-- Кнопка Play/Pause -->
         <div class="controls">
             <button class="play-btn" id="playBtn">PLAY</button>
         </div>
 
-        <!-- Прогресс-бар -->
         <div class="progress-container" id="progressContainer">
             <div class="progress" id="progress"></div>
         </div>
@@ -242,7 +231,6 @@
             <span id="duration">0:00</span>
         </div>
 
-        <!-- Громкость -->
         <div class="volume-section">
             <span class="volume-icon" id="volumeIcon">🔊</span>
             <div class="volume-slider-container" id="volumeContainer">
@@ -253,7 +241,7 @@
     </div>
 
     <script>
-        // Список треков — замени URL на свои
+        // ============ СПИСОК ТРЕКОВ ============
         const tracks = [
             {
                 name: "Mirage",
@@ -285,7 +273,7 @@
         let currentTrackIndex = 0;
         let volume = 0.8;
 
-        // Элементы
+        // ============ DOM ЭЛЕМЕНТЫ ============
         const audio = document.getElementById('audio');
         const playBtn = document.getElementById('playBtn');
         const progress = document.getElementById('progress');
@@ -301,7 +289,129 @@
         const volumeValue = document.getElementById('volumeValue');
         const volumeIcon = document.getElementById('volumeIcon');
 
-        // Инициализация списка треков
+        // ============ AUDIO VISUALIZER ============
+        const canvas = document.getElementById('visualizer');
+        const ctx = canvas.getContext('2d');
+        let audioCtx = null;
+        let analyser = null;
+        let source = null;
+        let dataArray = null;
+        let animationId = null;
+
+        // Размер canvas
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Инициализация AudioContext (нужен клик пользователя)
+        function initAudioContext() {
+            if (audioCtx) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 128; // количество частотных бинов
+                source = audioCtx.createMediaElementSource(audio);
+                source.connect(analyser);
+                analyser.connect(audioCtx.destination);
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+            } catch (e) {
+                console.warn('AudioContext init failed:', e);
+            }
+        }
+
+        // Рисование столбиков
+        function drawVisualizer() {
+            animationId = requestAnimationFrame(drawVisualizer);
+
+            const WIDTH = canvas.width;
+            const HEIGHT = canvas.height;
+
+            ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+            if (!analyser || !dataArray) {
+                // Если анализатора нет — рисуем "спящие" столбики
+                drawIdleBars(WIDTH, HEIGHT);
+                return;
+            }
+
+            analyser.getByteFrequencyData(dataArray);
+
+            const barCount = 64; // количество столбиков
+            const gap = 4; // расстояние между столбиками
+            const totalGap = gap * (barCount - 1);
+            const barWidth = (WIDTH - totalGap) / barCount;
+            const step = Math.floor(dataArray.length / barCount);
+
+            // Коэффициент громкости — столбики реагируют на громкость
+            const volumeFactor = volume;
+
+            for (let i = 0; i < barCount; i++) {
+                // Берём значение частоты (усредняем несколько бинов для плавности)
+                let sum = 0;
+                for (let j = 0; j < step; j++) {
+                    sum += dataArray[i * step + j] || 0;
+                }
+                const value = sum / step;
+
+                // Высота столбика с учётом громкости
+                const barHeight = (value / 255) * HEIGHT * 0.9 * volumeFactor;
+
+                // Градиент зелёного цвета
+                const gradient = ctx.createLinearGradient(0, HEIGHT, 0, HEIGHT - barHeight);
+                gradient.addColorStop(0, 'rgba(87, 242, 135, 0.9)');
+                gradient.addColorStop(0.5, 'rgba(87, 242, 135, 0.5)');
+                gradient.addColorStop(1, 'rgba(87, 242, 135, 0.1)');
+
+                ctx.fillStyle = gradient;
+
+                const x = i * (barWidth + gap);
+                const y = HEIGHT - barHeight;
+
+                // Свечение
+                ctx.shadowColor = '#57f287';
+                ctx.shadowBlur = 15;
+
+                ctx.fillRect(x, y, barWidth, barHeight);
+            }
+
+            // Сброс тени
+            ctx.shadowBlur = 0;
+        }
+
+        // "Спящие" столбики — когда плеер не играет
+        let idlePhase = 0;
+        function drawIdleBars(WIDTH, HEIGHT) {
+            idlePhase += 0.02;
+            const barCount = 64;
+            const gap = 4;
+            const barWidth = (WIDTH - gap * (barCount - 1)) / barCount;
+
+            for (let i = 0; i < barCount; i++) {
+                // Лёгкая синусоидальная анимация
+                const wave = Math.sin(idlePhase + i * 0.2) * 0.5 + 0.5;
+                const barHeight = 10 + wave * 20 * volume;
+
+                const gradient = ctx.createLinearGradient(0, HEIGHT, 0, HEIGHT - barHeight);
+                gradient.addColorStop(0, 'rgba(87, 242, 135, 0.4)');
+                gradient.addColorStop(1, 'rgba(87, 242, 135, 0.05)');
+
+                ctx.fillStyle = gradient;
+                const x = i * (barWidth + gap);
+                ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+            }
+        }
+
+        // Запуск визуализатора
+        function startVisualizer() {
+            if (!animationId) {
+                drawVisualizer();
+            }
+        }
+
+        // ============ ПЛЕЕР ============
         function renderTrackList() {
             trackList.innerHTML = '';
             tracks.forEach((track, index) => {
@@ -316,7 +426,6 @@
             });
         }
 
-        // Загрузка трека
         function loadTrack(index) {
             currentTrackIndex = index;
             const track = tracks[currentTrackIndex];
@@ -327,26 +436,32 @@
             playBtn.innerText = 'PAUSE';
             playBtn.style.backgroundColor = '#ff4757';
             playBtn.style.boxShadow = '0 4px 15px rgba(255, 71, 87, 0.4)';
+            // Пробуждаем AudioContext если он был приостановлен
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
         }
 
-        // Следующий трек
         function nextTrack() {
             currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
             loadTrack(currentTrackIndex);
         }
 
-        // Предыдущий трек
         function prevTrack() {
             currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
             loadTrack(currentTrackIndex);
         }
 
-        // Play/Pause
         function togglePlay() {
             if (audio.paused) {
                 if (!audio.src) {
                     loadTrack(0);
                     return;
+                }
+                // Инициализируем AudioContext при первом клике
+                initAudioContext();
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
                 }
                 audio.play();
                 playBtn.innerText = 'PAUSE';
@@ -360,20 +475,16 @@
             }
         }
 
-        // Обновление прогресса
         function updateProgress(e) {
             const { duration, currentTime } = e.srcElement;
             if (!duration) return;
-
             const progressPercent = (currentTime / duration) * 100;
             progress.style.width = `${progressPercent}%`;
-
             const formatTime = (time) => Math.floor(time / 60) + ':' + String(Math.floor(time % 60)).padStart(2, '0');
             currentTimeEl.innerText = formatTime(currentTime);
             durationEl.innerText = formatTime(duration);
         }
 
-        // Перемотка
         function setProgress(e) {
             const width = this.clientWidth;
             const clickX = e.offsetX;
@@ -381,7 +492,6 @@
             audio.currentTime = (clickX / width) * duration;
         }
 
-        // Громкость
         function setVolume(e) {
             const width = volumeContainer.clientWidth;
             const clickX = e.offsetX;
@@ -394,20 +504,13 @@
             const percent = Math.round(volume * 100);
             volumeLevel.style.width = `${percent}%`;
             volumeValue.textContent = `${percent}%`;
-
-            if (volume === 0) {
-                volumeIcon.textContent = '🔇';
-            } else if (volume < 0.5) {
-                volumeIcon.textContent = '🔉';
-            } else {
-                volumeIcon.textContent = '🔊';
-            }
+            if (volume === 0) volumeIcon.textContent = '🔇';
+            else if (volume < 0.5) volumeIcon.textContent = '🔉';
+            else volumeIcon.textContent = '🔊';
         }
 
-        // Авто-переключение на следующий трек
-        audio.addEventListener('ended', nextTrack);
-
         // События
+        audio.addEventListener('ended', nextTrack);
         playBtn.addEventListener('click', togglePlay);
         audio.addEventListener('timeupdate', updateProgress);
         audio.addEventListener('loadedmetadata', updateProgress);
@@ -422,6 +525,9 @@
         renderTrackList();
         trackSubtitle.textContent = tracks[0].artist + ' — ' + tracks[0].name;
         audio.src = tracks[0].src;
+
+        // Запускаем визуализатор сразу (будет показывать "спящие" столбики)
+        startVisualizer();
     </script>
 </body>
 </html>
