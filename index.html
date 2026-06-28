@@ -20,14 +20,15 @@
             color: #fff;
             overflow: hidden;
         }
+
         /* Контейнер плеера */
         .player-card {
             background: linear-gradient(145deg, #14161d, #1b1e26);
-            border: 2px solid #57f287; /* Зеленый неон в цвет кнопки на скрине */
+            border: 2px solid #57f287;
             box-shadow: 0 0 20px rgba(87, 242, 135, 0.2);
             border-radius: 12px;
             padding: 30px;
-            width: 350px;
+            width: 380px;
             text-align: center;
         }
         .title {
@@ -40,11 +41,67 @@
         .subtitle {
             font-size: 0.8rem;
             color: #8a8f98;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
-        /*Кнопка управления*/
+
+        /* Список треков */
+        .track-list {
+            background: #1b1e26;
+            border: 1px solid #2c2f36;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+        }
+        .track-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .track-list::-webkit-scrollbar-track {
+            background: #1b1e26;
+        }
+        .track-list::-webkit-scrollbar-thumb {
+            background: #57f287;
+            border-radius: 2px;
+        }
+        .track-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: #8a8f98;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #2c2f36;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .track-item:last-child {
+            border-bottom: none;
+        }
+        .track-item:hover {
+            background: #2c2f36;
+            color: #fff;
+        }
+        .track-item.active {
+            background: rgba(87, 242, 135, 0.1);
+            color: #57f287;
+            border-left: 3px solid #57f287;
+        }
+        .track-item .track-number {
+            font-size: 0.7rem;
+            opacity: 0.5;
+            min-width: 20px;
+        }
+        .track-item .track-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Кнопка управления */
         .controls {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         .play-btn {
             background-color: #57f287;
@@ -58,17 +115,19 @@
             transition: all 0.3s ease;
             text-transform: uppercase;
             box-shadow: 0 4px 15px rgba(87, 242, 135, 0.4);
+            font-family: 'Courier New', Courier, monospace;
         }
         .play-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 4px 25px rgba(87, 242, 135, 0.6);
         }
+
         /* Прогресс-бар */
         .progress-container {
             background-color: #2c2f36;
             border-radius: 5px;
             cursor: pointer;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             height: 6px;
             width: 100%;
             position: relative;
@@ -85,21 +144,95 @@
             justify-content: space-between;
             font-size: 0.75rem;
             color: #8a8f98;
+            margin-bottom: 20px;
+        }
+
+        /* Громкость */
+        .volume-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .volume-icon {
+            font-size: 1rem;
+            color: #57f287;
+            min-width: 20px;
+        }
+        .volume-slider-container {
+            flex: 1;
+            position: relative;
+            height: 6px;
+            background-color: #2c2f36;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .volume-level {
+            background-color: #57f287;
+            border-radius: 5px;
+            height: 100%;
+            width: 80%;
+            transition: width 0.1s linear;
+        }
+        .volume-value {
+            font-size: 0.7rem;
+            color: #8a8f98;
+            min-width: 35px;
+            text-align: right;
+        }
+
+        /* Навигация треков */
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .nav-btn {
+            background: #2c2f36;
+            color: #57f287;
+            border: 1px solid #57f287;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .nav-btn:hover {
+            background: #57f287;
+            color: #0d0e12;
+            box-shadow: 0 0 15px rgba(87, 242, 135, 0.4);
         }
     </style>
 </head>
 <body>
 
     <div class="player-card">
-        <div class="title">WELCOME</div>
-        <div class="subtitle">SYSTEM DEVIATION ACTIVE</div>
+        <div class="title">CYBER PLAYER</div>
+        <div class="subtitle" id="trackSubtitle">SYSTEM DEVIATION ACTIVE</div>
 
-        <audio id="audio" src="https://cdn11.deliciousoranges.com/s1/get/music/20250711/Creepy_Nuts_-_Mirage_79280769.mp3"></audio>
+        <!-- Список треков -->
+        <div class="track-list" id="trackList"></div>
 
+        <!-- Навигация -->
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prevBtn" title="Предыдущий">◄</button>
+            <button class="nav-btn" id="nextBtn" title="Следующий">►</button>
+        </div>
+
+        <audio id="audio"></audio>
+
+        <!-- Кнопка Play/Pause -->
         <div class="controls">
             <button class="play-btn" id="playBtn">PLAY</button>
         </div>
 
+        <!-- Прогресс-бар -->
         <div class="progress-container" id="progressContainer">
             <div class="progress" id="progress"></div>
         </div>
@@ -108,22 +241,116 @@
             <span id="currentTime">0:00</span>
             <span id="duration">0:00</span>
         </div>
+
+        <!-- Громкость -->
+        <div class="volume-section">
+            <span class="volume-icon" id="volumeIcon">🔊</span>
+            <div class="volume-slider-container" id="volumeContainer">
+                <div class="volume-level" id="volumeLevel"></div>
+            </div>
+            <span class="volume-value" id="volumeValue">80%</span>
+        </div>
     </div>
 
     <script>
+        // Список треков — замени URL на свои
+        const tracks = [
+            {
+                name: "Mirage",
+                artist: "Creepy Nuts",
+                src: "https://cdn11.deliciousoranges.com/s1/get/music/20250711/Creepy_Nuts_-_Mirage_79280769.mp3"
+            },
+            {
+                name: "Neon Dreams",
+                artist: "Synthwave Runner",
+                src: "https://cdn11.deliciousoranges.com/s1/get/music/20250711/Creepy_Nuts_-_Mirage_79280769.mp3"
+            },
+            {
+                name: "Digital Rain",
+                artist: "Cyber Echo",
+                src: "https://cdn11.deliciousoranges.com/s1/get/music/20250711/Creepy_Nuts_-_Mirage_79280769.mp3"
+            },
+            {
+                name: "Ghost Protocol",
+                artist: "Null Pointer",
+                src: "https://cdn11.deliciousoranges.com/s1/get/music/20250711/Creepy_Nuts_-_Mirage_79280769.mp3"
+            },
+            {
+                name: "Binary Sunset",
+                artist: "Retrograde",
+                src: "https://cdn11.deliciousoranges.com/s1/get/music/20250711/Creepy_Nuts_-_Mirage_79280769.mp3"
+            }
+        ];
+
+        let currentTrackIndex = 0;
+        let volume = 0.8;
+
+        // Элементы
         const audio = document.getElementById('audio');
         const playBtn = document.getElementById('playBtn');
         const progress = document.getElementById('progress');
         const progressContainer = document.getElementById('progressContainer');
         const currentTimeEl = document.getElementById('currentTime');
         const durationEl = document.getElementById('duration');
+        const trackList = document.getElementById('trackList');
+        const trackSubtitle = document.getElementById('trackSubtitle');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const volumeContainer = document.getElementById('volumeContainer');
+        const volumeLevel = document.getElementById('volumeLevel');
+        const volumeValue = document.getElementById('volumeValue');
+        const volumeIcon = document.getElementById('volumeIcon');
 
-        // Функция воспроизведения/паузы
+        // Инициализация списка треков
+        function renderTrackList() {
+            trackList.innerHTML = '';
+            tracks.forEach((track, index) => {
+                const item = document.createElement('div');
+                item.className = 'track-item' + (index === currentTrackIndex ? ' active' : '');
+                item.innerHTML = `
+                    <span class="track-number">${String(index + 1).padStart(2, '0')}</span>
+                    <span class="track-name">${track.name} — ${track.artist}</span>
+                `;
+                item.addEventListener('click', () => loadTrack(index));
+                trackList.appendChild(item);
+            });
+        }
+
+        // Загрузка трека
+        function loadTrack(index) {
+            currentTrackIndex = index;
+            const track = tracks[currentTrackIndex];
+            audio.src = track.src;
+            trackSubtitle.textContent = `${track.artist} — ${track.name}`;
+            renderTrackList();
+            audio.play();
+            playBtn.innerText = 'PAUSE';
+            playBtn.style.backgroundColor = '#ff4757';
+            playBtn.style.boxShadow = '0 4px 15px rgba(255, 71, 87, 0.4)';
+        }
+
+        // Следующий трек
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+            loadTrack(currentTrackIndex);
+        }
+
+        // Предыдущий трек
+        function prevTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+            loadTrack(currentTrackIndex);
+        }
+
+        // Play/Pause
         function togglePlay() {
             if (audio.paused) {
+                if (!audio.src) {
+                    loadTrack(0);
+                    return;
+                }
                 audio.play();
                 playBtn.innerText = 'PAUSE';
-                playBtn.style.backgroundColor = '#ff4757'; /* Меняем цвет на красный при паузе */
+                playBtn.style.backgroundColor = '#ff4757';
                 playBtn.style.boxShadow = '0 4px 15px rgba(255, 71, 87, 0.4)';
             } else {
                 audio.pause();
@@ -133,21 +360,20 @@
             }
         }
 
-        // Обновление таймера и полосы прогресса
+        // Обновление прогресса
         function updateProgress(e) {
             const { duration, currentTime } = e.srcElement;
             if (!duration) return;
-            
+
             const progressPercent = (currentTime / duration) * 100;
             progress.style.width = `${progressPercent}%`;
 
-            // Форматирование времени
             const formatTime = (time) => Math.floor(time / 60) + ':' + String(Math.floor(time % 60)).padStart(2, '0');
             currentTimeEl.innerText = formatTime(currentTime);
             durationEl.innerText = formatTime(duration);
         }
 
-        // Перемотка трека кликом по полосе
+        // Перемотка
         function setProgress(e) {
             const width = this.clientWidth;
             const clickX = e.offsetX;
@@ -155,18 +381,47 @@
             audio.currentTime = (clickX / width) * duration;
         }
 
-        // Автоматический запуск (Важно: современные браузеры требуют клика от пользователя перед включением звука)
-        window.addEventListener('click', () => {
-            if (audio.paused && playBtn.innerText === 'PLAY') {
-                // Можно раскомментировать строку ниже для автоплея при первом клике по экрану
-                // togglePlay(); 
-            }
-        }, { once: true });
+        // Громкость
+        function setVolume(e) {
+            const width = volumeContainer.clientWidth;
+            const clickX = e.offsetX;
+            volume = Math.max(0, Math.min(1, clickX / width));
+            audio.volume = volume;
+            updateVolumeUI();
+        }
 
+        function updateVolumeUI() {
+            const percent = Math.round(volume * 100);
+            volumeLevel.style.width = `${percent}%`;
+            volumeValue.textContent = `${percent}%`;
+
+            if (volume === 0) {
+                volumeIcon.textContent = '🔇';
+            } else if (volume < 0.5) {
+                volumeIcon.textContent = '🔉';
+            } else {
+                volumeIcon.textContent = '🔊';
+            }
+        }
+
+        // Авто-переключение на следующий трек
+        audio.addEventListener('ended', nextTrack);
+
+        // События
         playBtn.addEventListener('click', togglePlay);
         audio.addEventListener('timeupdate', updateProgress);
         audio.addEventListener('loadedmetadata', updateProgress);
         progressContainer.addEventListener('click', setProgress);
+        prevBtn.addEventListener('click', prevTrack);
+        nextBtn.addEventListener('click', nextTrack);
+        volumeContainer.addEventListener('click', setVolume);
+
+        // Инициализация
+        audio.volume = volume;
+        updateVolumeUI();
+        renderTrackList();
+        trackSubtitle.textContent = tracks[0].artist + ' — ' + tracks[0].name;
+        audio.src = tracks[0].src;
     </script>
 </body>
 </html>
