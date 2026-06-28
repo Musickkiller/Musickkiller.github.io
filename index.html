@@ -195,7 +195,6 @@
             <button class="nav-btn" id="nextBtn" title="Следующий">►</button>
         </div>
 
-        <!-- ВАЖНО: без crossorigin, чтобы музыка точно играла -->
         <audio id="audio" preload="auto"></audio>
 
         <div class="controls">
@@ -252,13 +251,9 @@
         // ============ ВИЗУАЛИЗАТОР ============
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
-        let audioCtx = null;
-        let analyser = null;
-        let dataArray = null;
         let animationId = null;
-        let useRealData = false; // Флаг: используем реальные данные или фейковые
 
-        // Сглаженные значения для фейковой визуализации (чтобы столбики не дёргались)
+        // Сглаженные значения столбиков
         let smoothedBars = [];
         const BAR_COUNT = 64;
         for (let i = 0; i < BAR_COUNT; i++) smoothedBars.push(0);
@@ -269,35 +264,6 @@
         }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-
-        // Попытка инициализировать AudioContext для реального анализа
-        function tryInitAudioContext() {
-            if (audioCtx) return;
-            try {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 128;
-                analyser.smoothingTimeConstant = 0.75;
-                // Подключаем audio к анализатору
-                const source = audioCtx.createMediaElementSource(audio);
-                source.connect(analyser);
-                analyser.connect(audioCtx.destination);
-                dataArray = new Uint8Array(analyser.frequencyBinCount);
-                useRealData = true;
-                console.log('✓ Реальный аудиоконтекст инициализирован');
-            } catch (e) {
-                console.warn('⚠ Реальный анализ недоступен (CORS). Используем фейковую визуализацию.', e);
-                useRealData = false;
-            }
-        }
-
-        // Проверка: есть ли реальные данные (не все нули)
-        function hasRealSignal() {
-            if (!dataArray) return false;
-            let sum = 0;
-            for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
-            return sum > 50; // если сумма больше 50 — есть реальный сигнал
-        }
 
         // Генерация фейковых данных на основе громкости и времени
         let fakePhase = 0;
@@ -329,29 +295,9 @@
 
             ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-            let barValues = [];
-
-            // Получаем данные — реальные или фейковые
-            if (useRealData && analyser && dataArray) {
-                analyser.getByteFrequencyData(dataArray);
-                if (hasRealSignal()) {
-                    // Реальные данные
-                    const step = Math.floor(dataArray.length / BAR_COUNT);
-                    for (let i = 0; i < BAR_COUNT; i++) {
-                        let sum = 0;
-                        for (let j = 0; j < step; j++) sum += dataArray[i * step + j] || 0;
-                        barValues.push((sum / step) / 255);
-                    }
-                } else {
-                    // AudioContext создан, но данных нет (CORS) — фейковые
-                    generateFakeBars();
-                    barValues = smoothedBars.slice();
-                }
-            } else {
-                // AudioContext не создан — фейковые
-                generateFakeBars();
-                barValues = smoothedBars.slice();
-            }
+            // Генерируем значения столбиков
+            generateFakeBars();
+            const barValues = smoothedBars.slice();
 
             // Применяем громкость к значениям
             const isPlaying = !audio.paused && !audio.ended;
@@ -424,11 +370,6 @@
         function togglePlay() {
             if (audio.paused) {
                 if (!audio.src) loadTrack(0);
-                // Пытаемся инициализировать AudioContext при первом клике
-                tryInitAudioContext();
-                if (audioCtx && audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
                 audio.play()
                     .then(() => {
                         playBtn.innerText = 'PAUSE';
