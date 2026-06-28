@@ -22,7 +22,7 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: 0;
-            opacity: 0.75;
+            opacity: 0.5; /* снижена яркость фона */
             pointer-events: none;
         }
         .player-card {
@@ -253,10 +253,21 @@
         const ctx = canvas.getContext('2d');
         let animationId = null;
 
-        // Сглаженные значения столбиков
-        let smoothedBars = [];
         const BAR_COUNT = 64;
+        let smoothedBars = [];
         for (let i = 0; i < BAR_COUNT; i++) smoothedBars.push(0);
+
+        // ФИКСИРОВАННЫЕ параметры для каждого столбика — чтобы они стояли на месте
+        // Каждый столбик имеет свою фазу и скорость колебаний
+        const barPhases = [];
+        const barSpeeds = [];
+        const barSeeds = [];
+        for (let i = 0; i < BAR_COUNT; i++) {
+            // Псевдослучайные, но фиксированные значения (детерминированные от индекса)
+            barPhases.push((i * 2.37) % (Math.PI * 2));
+            barSpeeds.push(0.6 + ((i * 13) % 17) / 20); // скорость от 0.6 до 1.45
+            barSeeds.push(((i * 7 + 3) % 11) / 11); // "шумовой" сид
+        }
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -265,24 +276,32 @@
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // Генерация фейковых данных на основе громкости и времени
-        let fakePhase = 0;
-        function generateFakeBars() {
-            fakePhase += 0.08;
+        // Генерация значений столбиков — БЕЗ бегущей волны
+        let globalTime = 0;
+        function generateBars() {
+            globalTime += 0.04;
             const isPlaying = !audio.paused && !audio.ended;
             const intensity = isPlaying ? volume : 0.15;
 
             for (let i = 0; i < BAR_COUNT; i++) {
-                // Базовая волна + шум + зависимость от частоты (низкие частоты выше)
-                const freqFactor = 1 - (i / BAR_COUNT) * 0.6;
-                const wave1 = Math.sin(fakePhase + i * 0.3) * 0.5 + 0.5;
-                const wave2 = Math.sin(fakePhase * 1.7 + i * 0.15) * 0.3 + 0.5;
-                const noise = Math.random() * 0.3;
+                // Каждый столбик колеблется в своём ритме (фиксированная скорость и фаза)
+                const phase = barPhases[i];
+                const speed = barSpeeds[i];
+                const seed = barSeeds[i];
 
-                let target = (wave1 * 0.6 + wave2 * 0.3 + noise * 0.1) * freqFactor * intensity;
+                // Колебания — синус от глобального времени с индивидуальной скоростью
+                const wave1 = Math.sin(globalTime * speed + phase) * 0.5 + 0.5;
+                const wave2 = Math.sin(globalTime * speed * 1.7 + phase * 2.1) * 0.3 + 0.5;
+                // Псевдослучайный "шум", привязанный к столбику и времени
+                const noise = (Math.sin(globalTime * 3.1 + seed * 100) * 0.5 + 0.5) * 0.25;
 
-                // Сглаживание — столбики плавно падают и растут
-                smoothedBars[i] += (target - smoothedBars[i]) * 0.25;
+                // Низкие частоты (слева) чуть выше — имитация басов
+                const freqFactor = 1 - (i / BAR_COUNT) * 0.5;
+
+                let target = (wave1 * 0.55 + wave2 * 0.3 + noise * 0.15) * freqFactor * intensity;
+
+                // Плавное сглаживание
+                smoothedBars[i] += (target - smoothedBars[i]) * 0.22;
             }
         }
 
@@ -295,11 +314,9 @@
 
             ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-            // Генерируем значения столбиков
-            generateFakeBars();
+            generateBars();
             const barValues = smoothedBars.slice();
 
-            // Применяем громкость к значениям
             const isPlaying = !audio.paused && !audio.ended;
             const volumeFactor = isPlaying ? Math.max(0.2, volume) : 0.3;
 
@@ -313,14 +330,15 @@
 
                 if (barHeight < 1) continue;
 
+                // СНИЖЕННАЯ ЯРКОСТЬ — альфа-каналы уменьшены
                 const gradient = ctx.createLinearGradient(0, HEIGHT, 0, HEIGHT - barHeight);
-                gradient.addColorStop(0, 'rgba(87, 242, 135, 0.95)');
-                gradient.addColorStop(0.5, 'rgba(87, 242, 135, 0.5)');
-                gradient.addColorStop(1, 'rgba(87, 242, 135, 0.05)');
+                gradient.addColorStop(0, 'rgba(87, 242, 135, 0.55)');   // было 0.95
+                gradient.addColorStop(0.5, 'rgba(87, 242, 135, 0.28)'); // было 0.5
+                gradient.addColorStop(1, 'rgba(87, 242, 135, 0.02)');   // было 0.05
 
                 ctx.fillStyle = gradient;
                 ctx.shadowColor = '#57f287';
-                ctx.shadowBlur = 12;
+                ctx.shadowBlur = 6; // было 12
 
                 const x = i * (barWidth + gap);
                 ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
