@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WELCOME NAHUI</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             background-color: #0d0e12;
             font-family: 'Courier New', Courier, monospace;
@@ -21,20 +17,14 @@
             overflow: hidden;
             position: relative;
         }
-
-        /* Canvas визуализатора — на весь экран позади плеера */
         #visualizer {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 0;
             opacity: 0.75;
             pointer-events: none;
         }
-
-        /* Контейнер плеера */
         .player-card {
             background: linear-gradient(145deg, rgba(20, 22, 29, 0.92), rgba(27, 30, 38, 0.92));
             border: 2px solid #57f287;
@@ -54,13 +44,7 @@
             margin-bottom: 5px;
             color: #57f287;
         }
-        .subtitle {
-            font-size: 0.8rem;
-            color: #8a8f98;
-            margin-bottom: 20px;
-        }
-
-        /* Список треков */
+        .subtitle { font-size: 0.8rem; color: #8a8f98; margin-bottom: 20px; }
         .track-list {
             background: rgba(27, 30, 38, 0.85);
             border: 1px solid #2c2f36;
@@ -98,7 +82,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
         .controls { margin-bottom: 20px; }
         .play-btn {
             background-color: #57f287;
@@ -118,7 +101,6 @@
             transform: scale(1.05);
             box-shadow: 0 4px 25px rgba(87, 242, 135, 0.6);
         }
-
         .progress-container {
             background-color: #2c2f36;
             border-radius: 5px;
@@ -142,7 +124,6 @@
             color: #8a8f98;
             margin-bottom: 20px;
         }
-
         .volume-section {
             display: flex;
             align-items: center;
@@ -171,7 +152,6 @@
             min-width: 35px;
             text-align: right;
         }
-
         .nav-buttons {
             display: flex;
             justify-content: center;
@@ -202,7 +182,6 @@
 </head>
 <body>
 
-    <!-- Canvas для визуализации звука -->
     <canvas id="visualizer"></canvas>
 
     <div class="player-card">
@@ -216,7 +195,8 @@
             <button class="nav-btn" id="nextBtn" title="Следующий">►</button>
         </div>
 
-        <audio id="audio" crossorigin="anonymous"></audio>
+        <!-- ВАЖНО: без crossorigin, чтобы музыка точно играла -->
+        <audio id="audio" preload="auto"></audio>
 
         <div class="controls">
             <button class="play-btn" id="playBtn">PLAY</button>
@@ -243,37 +223,17 @@
     <script>
         // ============ СПИСОК ТРЕКОВ ============
         const tracks = [
-            {
-                name: "Mirage",
-                artist: "Creepy Nuts",
-                src: "https://cdn11.deliciousoranges.com/s1/get/music/20250711/Creepy_Nuts_-_Mirage_79280769.mp3"
-            },
-            {
-                name: "Don't tell your dreams",
-                artist: "LOVIXX, STOSLIV",
-                src: "https://cdn5.deliciousoranges.com/s1/get/music/20260621/LOVIXX_-_Dont_tell_your_dreams_81746473.mp3"
-            },
-            {
-                name: "Hilfe",
-                artist: "Lostboi Lino",
-                src: "https://s1.deliciouspeaches.com/get/music/20250821/Lostboi_Lino_-_Hilfe_79520224.mp3"
-            },
-            {
-                name: "Hurricane",
-                artist: "BUNT. feat. HON, SMBDY",
-                src: "https://s3.deliciouspeaches.com/get/music/20220126/BUNT_feat_HON_SMBDY_-_Hurricane_73712791.mp3"
-            },
-            {
-                name: "Make It Bun Dem",
-                artist: "Skrillex",
-                src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3"
-            }
+            { name: "Mirage", artist: "Creepy Nuts", src: "https://cdn11.deliciousoranges.com/s1/get/music/20250711/Creepy_Nuts_-_Mirage_79280769.mp3" },
+            { name: "Don't tell your dreams", artist: "LOVIXX, STOSLIV", src: "https://cdn5.deliciousoranges.com/s1/get/music/20260621/LOVIXX_-_Dont_tell_your_dreams_81746473.mp3" },
+            { name: "Hilfe", artist: "Lostboi Lino", src: "https://s1.deliciouspeaches.com/get/music/20250821/Lostboi_Lino_-_Hilfe_79520224.mp3" },
+            { name: "Hurricane", artist: "BUNT. feat. HON, SMBDY", src: "https://s3.deliciouspeaches.com/get/music/20220126/BUNT_feat_HON_SMBDY_-_Hurricane_73712791.mp3" },
+            { name: "Make It Bun Dem", artist: "Skrillex", src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3" }
         ];
 
         let currentTrackIndex = 0;
         let volume = 0.8;
 
-        // ============ DOM ЭЛЕМЕНТЫ ============
+        // ============ DOM ============
         const audio = document.getElementById('audio');
         const playBtn = document.getElementById('playBtn');
         const progress = document.getElementById('progress');
@@ -289,16 +249,20 @@
         const volumeValue = document.getElementById('volumeValue');
         const volumeIcon = document.getElementById('volumeIcon');
 
-        // ============ AUDIO VISUALIZER ============
+        // ============ ВИЗУАЛИЗАТОР ============
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
         let audioCtx = null;
         let analyser = null;
-        let source = null;
         let dataArray = null;
         let animationId = null;
+        let useRealData = false; // Флаг: используем реальные данные или фейковые
 
-        // Размер canvas
+        // Сглаженные значения для фейковой визуализации (чтобы столбики не дёргались)
+        let smoothedBars = [];
+        const BAR_COUNT = 64;
+        for (let i = 0; i < BAR_COUNT; i++) smoothedBars.push(0);
+
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -306,23 +270,57 @@
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // Инициализация AudioContext (нужен клик пользователя)
-        function initAudioContext() {
+        // Попытка инициализировать AudioContext для реального анализа
+        function tryInitAudioContext() {
             if (audioCtx) return;
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 128; // количество частотных бинов
-                source = audioCtx.createMediaElementSource(audio);
+                analyser.fftSize = 128;
+                analyser.smoothingTimeConstant = 0.75;
+                // Подключаем audio к анализатору
+                const source = audioCtx.createMediaElementSource(audio);
                 source.connect(analyser);
                 analyser.connect(audioCtx.destination);
                 dataArray = new Uint8Array(analyser.frequencyBinCount);
+                useRealData = true;
+                console.log('✓ Реальный аудиоконтекст инициализирован');
             } catch (e) {
-                console.warn('AudioContext init failed:', e);
+                console.warn('⚠ Реальный анализ недоступен (CORS). Используем фейковую визуализацию.', e);
+                useRealData = false;
             }
         }
 
-        // Рисование столбиков
+        // Проверка: есть ли реальные данные (не все нули)
+        function hasRealSignal() {
+            if (!dataArray) return false;
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+            return sum > 50; // если сумма больше 50 — есть реальный сигнал
+        }
+
+        // Генерация фейковых данных на основе громкости и времени
+        let fakePhase = 0;
+        function generateFakeBars() {
+            fakePhase += 0.08;
+            const isPlaying = !audio.paused && !audio.ended;
+            const intensity = isPlaying ? volume : 0.15;
+
+            for (let i = 0; i < BAR_COUNT; i++) {
+                // Базовая волна + шум + зависимость от частоты (низкие частоты выше)
+                const freqFactor = 1 - (i / BAR_COUNT) * 0.6;
+                const wave1 = Math.sin(fakePhase + i * 0.3) * 0.5 + 0.5;
+                const wave2 = Math.sin(fakePhase * 1.7 + i * 0.15) * 0.3 + 0.5;
+                const noise = Math.random() * 0.3;
+
+                let target = (wave1 * 0.6 + wave2 * 0.3 + noise * 0.1) * freqFactor * intensity;
+
+                // Сглаживание — столбики плавно падают и растут
+                smoothedBars[i] += (target - smoothedBars[i]) * 0.25;
+            }
+        }
+
+        // Рисование
         function drawVisualizer() {
             animationId = requestAnimationFrame(drawVisualizer);
 
@@ -331,84 +329,57 @@
 
             ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-            if (!analyser || !dataArray) {
-                // Если анализатора нет — рисуем "спящие" столбики
-                drawIdleBars(WIDTH, HEIGHT);
-                return;
-            }
+            let barValues = [];
 
-            analyser.getByteFrequencyData(dataArray);
-
-            const barCount = 64; // количество столбиков
-            const gap = 4; // расстояние между столбиками
-            const totalGap = gap * (barCount - 1);
-            const barWidth = (WIDTH - totalGap) / barCount;
-            const step = Math.floor(dataArray.length / barCount);
-
-            // Коэффициент громкости — столбики реагируют на громкость
-            const volumeFactor = volume;
-
-            for (let i = 0; i < barCount; i++) {
-                // Берём значение частоты (усредняем несколько бинов для плавности)
-                let sum = 0;
-                for (let j = 0; j < step; j++) {
-                    sum += dataArray[i * step + j] || 0;
+            // Получаем данные — реальные или фейковые
+            if (useRealData && analyser && dataArray) {
+                analyser.getByteFrequencyData(dataArray);
+                if (hasRealSignal()) {
+                    // Реальные данные
+                    const step = Math.floor(dataArray.length / BAR_COUNT);
+                    for (let i = 0; i < BAR_COUNT; i++) {
+                        let sum = 0;
+                        for (let j = 0; j < step; j++) sum += dataArray[i * step + j] || 0;
+                        barValues.push((sum / step) / 255);
+                    }
+                } else {
+                    // AudioContext создан, но данных нет (CORS) — фейковые
+                    generateFakeBars();
+                    barValues = smoothedBars.slice();
                 }
-                const value = sum / step;
-
-                // Высота столбика с учётом громкости
-                const barHeight = (value / 255) * HEIGHT * 0.9 * volumeFactor;
-
-                // Градиент зелёного цвета
-                const gradient = ctx.createLinearGradient(0, HEIGHT, 0, HEIGHT - barHeight);
-                gradient.addColorStop(0, 'rgba(87, 242, 135, 0.9)');
-                gradient.addColorStop(0.5, 'rgba(87, 242, 135, 0.5)');
-                gradient.addColorStop(1, 'rgba(87, 242, 135, 0.1)');
-
-                ctx.fillStyle = gradient;
-
-                const x = i * (barWidth + gap);
-                const y = HEIGHT - barHeight;
-
-                // Свечение
-                ctx.shadowColor = '#57f287';
-                ctx.shadowBlur = 15;
-
-                ctx.fillRect(x, y, barWidth, barHeight);
+            } else {
+                // AudioContext не создан — фейковые
+                generateFakeBars();
+                barValues = smoothedBars.slice();
             }
 
-            // Сброс тени
-            ctx.shadowBlur = 0;
-        }
+            // Применяем громкость к значениям
+            const isPlaying = !audio.paused && !audio.ended;
+            const volumeFactor = isPlaying ? Math.max(0.2, volume) : 0.3;
 
-        // "Спящие" столбики — когда плеер не играет
-        let idlePhase = 0;
-        function drawIdleBars(WIDTH, HEIGHT) {
-            idlePhase += 0.02;
-            const barCount = 64;
             const gap = 4;
-            const barWidth = (WIDTH - gap * (barCount - 1)) / barCount;
+            const totalGap = gap * (BAR_COUNT - 1);
+            const barWidth = (WIDTH - totalGap) / BAR_COUNT;
 
-            for (let i = 0; i < barCount; i++) {
-                // Лёгкая синусоидальная анимация
-                const wave = Math.sin(idlePhase + i * 0.2) * 0.5 + 0.5;
-                const barHeight = 10 + wave * 20 * volume;
+            for (let i = 0; i < BAR_COUNT; i++) {
+                const value = barValues[i] * volumeFactor;
+                const barHeight = value * HEIGHT * 0.85;
+
+                if (barHeight < 1) continue;
 
                 const gradient = ctx.createLinearGradient(0, HEIGHT, 0, HEIGHT - barHeight);
-                gradient.addColorStop(0, 'rgba(87, 242, 135, 0.4)');
+                gradient.addColorStop(0, 'rgba(87, 242, 135, 0.95)');
+                gradient.addColorStop(0.5, 'rgba(87, 242, 135, 0.5)');
                 gradient.addColorStop(1, 'rgba(87, 242, 135, 0.05)');
 
                 ctx.fillStyle = gradient;
+                ctx.shadowColor = '#57f287';
+                ctx.shadowBlur = 12;
+
                 const x = i * (barWidth + gap);
                 ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
             }
-        }
-
-        // Запуск визуализатора
-        function startVisualizer() {
-            if (!animationId) {
-                drawVisualizer();
-            }
+            ctx.shadowBlur = 0;
         }
 
         // ============ ПЛЕЕР ============
@@ -427,46 +398,44 @@
         }
 
         function loadTrack(index) {
+            const wasPlaying = !audio.paused;
             currentTrackIndex = index;
             const track = tracks[currentTrackIndex];
             audio.src = track.src;
             trackSubtitle.textContent = `${track.artist} — ${track.name}`;
             renderTrackList();
-            audio.play();
-            playBtn.innerText = 'PAUSE';
-            playBtn.style.backgroundColor = '#ff4757';
-            playBtn.style.boxShadow = '0 4px 15px rgba(255, 71, 87, 0.4)';
-            // Пробуждаем AudioContext если он был приостановлен
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
+            if (wasPlaying) {
+                audio.play().catch(e => console.warn('Play error:', e));
             }
         }
 
         function nextTrack() {
             currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
             loadTrack(currentTrackIndex);
+            audio.play().catch(e => console.warn('Play error:', e));
         }
 
         function prevTrack() {
             currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
             loadTrack(currentTrackIndex);
+            audio.play().catch(e => console.warn('Play error:', e));
         }
 
         function togglePlay() {
             if (audio.paused) {
-                if (!audio.src) {
-                    loadTrack(0);
-                    return;
-                }
-                // Инициализируем AudioContext при первом клике
-                initAudioContext();
+                if (!audio.src) loadTrack(0);
+                // Пытаемся инициализировать AudioContext при первом клике
+                tryInitAudioContext();
                 if (audioCtx && audioCtx.state === 'suspended') {
                     audioCtx.resume();
                 }
-                audio.play();
-                playBtn.innerText = 'PAUSE';
-                playBtn.style.backgroundColor = '#ff4757';
-                playBtn.style.boxShadow = '0 4px 15px rgba(255, 71, 87, 0.4)';
+                audio.play()
+                    .then(() => {
+                        playBtn.innerText = 'PAUSE';
+                        playBtn.style.backgroundColor = '#ff4757';
+                        playBtn.style.boxShadow = '0 4px 15px rgba(255, 71, 87, 0.4)';
+                    })
+                    .catch(e => console.warn('Play error:', e));
             } else {
                 audio.pause();
                 playBtn.innerText = 'PLAY';
@@ -526,8 +495,8 @@
         trackSubtitle.textContent = tracks[0].artist + ' — ' + tracks[0].name;
         audio.src = tracks[0].src;
 
-        // Запускаем визуализатор сразу (будет показывать "спящие" столбики)
-        startVisualizer();
+        // Запуск визуализатора
+        drawVisualizer();
     </script>
 </body>
 </html>
