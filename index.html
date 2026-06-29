@@ -219,7 +219,7 @@
     </div>
 
     <script>
-        // ============ СПИСОК ТРЕКОВ ============
+        // СПИСОК ТРЕКОВ
         const tracks = [
             { name: "Mirage", artist: "Creepy Nuts", src: "https://cdn11.deliciousoranges.com/s1/get/music/20250711/Creepy_Nuts_-_Mirage_79280769.mp3" },
             { name: "Don't tell your dreams", artist: "LOVIXX, STOSLIV", src: "https://cdn5.deliciousoranges.com/s1/get/music/20260621/LOVIXX_-_Dont_tell_your_dreams_81746473.mp3" },
@@ -231,7 +231,7 @@
         let currentTrackIndex = 0;
         let volume = 0.8;
 
-        // ============ DOM ============
+        // DOM 
         const audio = document.getElementById('audio');
         const playBtn = document.getElementById('playBtn');
         const progress = document.getElementById('progress');
@@ -247,7 +247,7 @@
         const volumeValue = document.getElementById('volumeValue');
         const volumeIcon = document.getElementById('volumeIcon');
 
-        // ============ ВИЗУАЛИЗАТОР ============
+        // ВИЗУАЛИЗАТОР
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
 
@@ -257,7 +257,7 @@
             initParticles();
         }
 
-        // ============ ВОЛНЫ (AURORA) ============
+        // ВОЛНЫ (AURORA)
         // Несколько слоёв волн с разной скоростью и амплитудой
         const waves = [
             { y: 0.65, amplitude: 60, frequency: 0.008, speed: 0.015, color1: 'rgba(87, 242, 135, 0.18)', color2: 'rgba(87, 242, 135, 0.0)', phase: 0 },
@@ -266,7 +266,7 @@
             { y: 0.88, amplitude: 35, frequency: 0.015, speed: 0.025, color1: 'rgba(180, 255, 210, 0.20)', color2: 'rgba(87, 242, 135, 0.0)', phase: 4.5 }
         ];
 
-        // ============ ЧАСТИЦЫ ============
+        // ЧАСТИЦЫ
         let particles = [];
         const PARTICLE_COUNT = 50;
 
@@ -301,9 +301,8 @@
             ctx.beginPath();
             ctx.moveTo(0, HEIGHT);
 
-            // Строим кривую волны
             for (let x = 0; x <= WIDTH; x += 4) {
-                // Комбинация синусоид для органичного вида
+
                 const y = baseY +
                     Math.sin(x * wave.frequency + time * wave.speed + wave.phase) * amp +
                     Math.sin(x * wave.frequency * 2.3 + time * wave.speed * 1.5) * amp * 0.3 +
@@ -411,7 +410,7 @@
             drawParticles(time, volumeFactor);
         }
 
-        // ============ ПЛЕЕР ============
+        // ПЛЕЕР
         function renderTrackList() {
             trackList.innerHTML = '';
             tracks.forEach((track, index) => {
