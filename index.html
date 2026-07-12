@@ -124,7 +124,7 @@
         }
         
         /* ВИДЕО ФОН */
-        #youtube-bg {
+        #video-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
@@ -133,25 +133,26 @@
             opacity: 0;
             transition: opacity 1s ease;
             overflow: hidden;
+            background: #000;
         }
-        #youtube-bg.visible {
+        #video-bg.visible {
             opacity: 1;
         }
-        #youtube-bg iframe {
+        #video-bg video {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 100vw;
-            height: 100vh;
             min-width: 100%;
             min-height: 100%;
+            width: auto;
+            height: auto;
             transform: translate(-50%, -50%);
-            border: none;
+            object-fit: cover;
             pointer-events: none;
         }
         
-        /* Затемнение поверх видео для читаемости */
-        #youtube-bg::after {
+        /* Затемнение поверх видео для читаемости плеера */
+        #video-bg::after {
             content: '';
             position: absolute;
             top: 0; left: 0;
@@ -595,7 +596,9 @@
     </div>
 
     <canvas id="visualizer"></canvas>
-    <div id="youtube-bg"></div>
+    
+    <!-- ⚡ КОНТЕЙНЕР ДЛЯ ВИДЕО-ФОНА (вместо YouTube) -->
+    <div id="video-bg"></div>
 
     <div class="player-card" id="playerCard">
         <div class="title" id="titleText" data-text="WELCOME NAHUI">WELCOME NAHUI</div>
@@ -662,12 +665,12 @@
                 { name: "Don't tell your dreams", artist: "LOVIXX, STOSLIV", src: "https://cdn5.deliciousoranges.com/s1/get/music/20260621/LOVIXX_-_Dont_tell_your_dreams_81746473.mp3" },
                 { name: "Hilfe", artist: "Lostboi Lino", src: "https://s1.deliciouspeaches.com/get/music/20250821/Lostboi_Lino_-_Hilfe_79520224.mp3" },
                 { name: "Hurricane", artist: "BUNT. feat. HON, SMBDY", src: "https://s3.deliciouspeaches.com/get/music/20220126/BUNT_feat_HON_SMBDY_-_Hurricane_73712791.mp3" },
-                { name: "Make It Bun Dem", artist: "Skrillex", src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3", videoId: "A272a0bf1pI" }
+                { name: "Make It Bun Dem", artist: "Skrillex", src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3", videoSrc: "https://files.catbox.moe/9wp3ih.mp4" }
             ],
             nostalgia: [
                 { name: "Nine Thou", artist: "Styles of Beyond", src: "https://s4.deliciouspeaches.com/get/music/20101112/Styles_of_Beyond_-_Nine_thou_19741.mp3" },
                 { name: "Ezio's Family", artist: "Jesper Kyd", src: "https://s2.deliciouspeaches.com/get/music/20181231/Jesper_Kyd_-_Ezios_Family_61237442.mp3" },
-                { name: "Make It Bun Dem", artist: "Skrillex", src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3", videoId: "A272a0bf1pI" },
+                { name: "Make It Bun Dem", artist: "Skrillex", src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3", videoSrc: "https://files.catbox.moe/9wp3ih.mp4" },
                 { name: "Loonboon", artist: "Laura Shigihara", src: "https://s3.deliciouspeaches.com/get/music/20230429/Laura_Shigihara_OST_PvZ_-_Loonboon_75886511.mp3" },
                 { name: "Minecraft", artist: "C418", src: "https://cdn20.deliciousoranges.com/s1/get/music/20260403/C418_-_Minecraft_81201046.mp3" },
                 { name: "Wasteland 2 (ost Stalker Shadow of Chernobyl)", artist: "MoozE", src: "https://s4.deliciouspeaches.com/get/music/20190419/MoozE_-_Wasteland_ost_Stalker_Shadow_of_Chernobyl_63616693.mp3" },
@@ -733,7 +736,7 @@
         const volumeThumb = document.getElementById('volumeThumb');
         const volumeValue = document.getElementById('volumeValue');
         const volumeIcon = document.getElementById('volumeIcon');
-        const youtubeBg = document.getElementById('youtube-bg');
+        const videoBg = document.getElementById('video-bg'); // ⭐ изменили с youtube-bg на video-bg
         const tabBtns = document.querySelectorAll('.tab-btn');
         const playerCard = document.getElementById('playerCard');
         const titleText = document.getElementById('titleText');
@@ -985,31 +988,45 @@
         drawMatrix();
         window.addEventListener('resize', initMatrix);
 
-        // ========== УПРАВЛЕНИЕ ВИДЕО ==========
-        function showVideo(videoId) {
-            // Создаём iframe с правильными параметрами для автозапуска
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin=${window.location.origin}`;
-            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-            iframe.allowFullscreen = true;
+        function showVideo(videoSrc) {
+            // Очищаем контейнер
+            videoBg.innerHTML = '';
             
-            // Очищаем контейнер и добавляем iframe
-            youtubeBg.innerHTML = '';
-            youtubeBg.appendChild(iframe);
+            // Создаём тег <video>
+            const video = document.createElement('video');
+            video.src = videoSrc;
+            video.autoplay = true;
+            video.loop = true;
+            video.muted = true; // Обязательно для автозапуска в браузерах
+            video.playsInline = true; // Для iOS
+            video.setAttribute('playsinline', '');
+            video.setAttribute('webkit-playsinline', '');
             
-            // Показываем с задержкой для плавности
+            // Обработка ошибок загрузки
+            video.addEventListener('error', (e) => {
+                console.warn('⚠️ Ошибка загрузки видео:', videoSrc);
+            });
+            
+            videoBg.appendChild(video);
+            
+            // Показываем с небольшой задержкой для плавности
             setTimeout(() => {
-                youtubeBg.classList.add('visible');
+                videoBg.classList.add('visible');
             }, 100);
             
-            console.log('🎬 Показ видео:', videoId);
+            console.log('🎬 Показ видео из файла:', videoSrc);
         }
 
         function hideVideo() {
-            youtubeBg.classList.remove('visible');
-            // Очищаем iframe после анимации
+            videoBg.classList.remove('visible');
+            // Очищаем видео после анимации
             setTimeout(() => {
-                youtubeBg.innerHTML = '';
+                const video = videoBg.querySelector('video');
+                if (video) {
+                    video.pause();
+                    video.src = '';
+                }
+                videoBg.innerHTML = '';
             }, 1000);
             console.log('🎬 Скрытие видео');
         }
@@ -1042,12 +1059,11 @@
             quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
             renderTrackList();
             
-            // Управление видео фоном
-            if (track.videoId) {
-                console.log('🎥 Трек имеет videoId:', track.videoId);
-                showVideo(track.videoId);
+            if (track.videoSrc) {
+                console.log('🎥 Трек имеет videoSrc:', track.videoSrc);
+                showVideo(track.videoSrc);
             } else {
-                console.log('🚫 Трек без videoId');
+                console.log('🚫 Трек без videoSrc');
                 hideVideo();
             }
             
@@ -1270,7 +1286,7 @@
                 audio.src = tracks[0].src;
                 typeWriter(`${tracks[0].artist} — ${tracks[0].name}`, trackSubtitle, 40);
 
-                if (tracks[0].videoId) showVideo(tracks[0].videoId);
+                if (tracks[0].videoSrc) showVideo(tracks[0].videoSrc);
                 else hideVideo();
 
                 renderTrackList();
