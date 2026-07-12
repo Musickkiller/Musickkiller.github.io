@@ -576,8 +576,8 @@
         }
 
         function updateProgress(e) {
-            const { duration, currentTime } = e.target;
-            if (!duration || !isFinite(duration)) return;
+            const { duration, currentTime } = e.srcElement;
+            if (!duration) return;
             const progressPercent = (currentTime / duration) * 100;
             progress.style.width = `${progressPercent}%`;
             const formatTime = (time) => Math.floor(time / 60) + ':' + String(Math.floor(time % 60)).padStart(2, '0');
@@ -586,11 +586,10 @@
         }
 
         function setProgress(e) {
-            const rect = this.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
             const duration = audio.duration;
-            if (!duration || !isFinite(duration)) return;
-            audio.currentTime = (clickX / rect.width) * duration;
+            audio.currentTime = (clickX / width) * duration;
         }
 
         // ========== ГРОМКОСТЬ: ПЕРЕТАСКИВАНИЕ ==========
@@ -710,8 +709,6 @@
         const initialTracks = getCurrentTracks();
         trackSubtitle.textContent = initialTracks[0].artist + ' — ' + initialTracks[0].name;
         audio.src = initialTracks[0].src;
-        
-        if (!duration || !isFinite(duration)) return;
 
         // Запуск визуализатора
         drawVisualizer();
