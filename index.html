@@ -61,6 +61,39 @@
             color: #57f287;
         }
         .subtitle { font-size: 0.8rem; color: #8a8f98; margin-bottom: 20px; }
+
+        /* ВКЛАДКИ */
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #2c2f36;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px 15px;
+            background: rgba(27, 30, 38, 0.85);
+            color: #8a8f98;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: 'Courier New', Courier, monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        .tab-btn:hover {
+            background: #2c2f36;
+            color: #fff;
+        }
+        .tab-btn.active {
+            background: rgba(87, 242, 135, 0.15);
+            color: #57f287;
+            border-bottom: 2px solid #57f287;
+        }
+
         .track-list {
             background: rgba(27, 30, 38, 0.85);
             border: 1px solid #2c2f36;
@@ -160,7 +193,32 @@
             border-radius: 5px;
             height: 100%;
             width: 80%;
-            transition: width 0.1s linear;
+            transition: width 0.05s linear;
+            pointer-events: none;
+        }
+        /* Ползунок (ручка) */
+        .volume-thumb {
+            position: absolute;
+            top: 50%;
+            left: 80%;
+            width: 14px;
+            height: 14px;
+            background: #57f287;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 8px rgba(87, 242, 135, 0.5);
+            cursor: grab;
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
+            z-index: 2;
+        }
+        .volume-thumb:hover {
+            transform: translate(-50%, -50%) scale(1.3);
+            box-shadow: 0 0 14px rgba(87, 242, 135, 0.8);
+        }
+        .volume-thumb.dragging {
+            cursor: grabbing;
+            transform: translate(-50%, -50%) scale(1.4);
+            box-shadow: 0 0 18px rgba(87, 242, 135, 1);
         }
         .volume-value {
             font-size: 0.7rem;
@@ -205,6 +263,12 @@
         <div class="title">WELCOME NAHUI</div>
         <div class="subtitle" id="trackSubtitle">CHILL</div>
 
+        <!-- ВКЛАДКИ -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="chill">Chill</button>
+            <button class="tab-btn" data-tab="nostalgia">Ностальгия</button>
+        </div>
+
         <div class="track-list" id="trackList"></div>
 
         <div class="nav-buttons">
@@ -231,23 +295,38 @@
             <span class="volume-icon" id="volumeIcon">🔊</span>
             <div class="volume-slider-container" id="volumeContainer">
                 <div class="volume-level" id="volumeLevel"></div>
+                <div class="volume-thumb" id="volumeThumb"></div>
             </div>
             <span class="volume-value" id="volumeValue">80%</span>
         </div>
     </div>
 
     <script>
-        // СПИСОК ТРЕКОВ
-        const tracks = [
-            { name: "Mirage", artist: "Creepy Nuts", src: "https://cdn11.deliciousoranges.com/s1/get/music/20250711/Creepy_Nuts_-_Mirage_79280769.mp3" },
-            { name: "Don't tell your dreams", artist: "LOVIXX, STOSLIV", src: "https://cdn5.deliciousoranges.com/s1/get/music/20260621/LOVIXX_-_Dont_tell_your_dreams_81746473.mp3" },
-            { name: "Hilfe", artist: "Lostboi Lino", src: "https://s1.deliciouspeaches.com/get/music/20250821/Lostboi_Lino_-_Hilfe_79520224.mp3" },
-            { name: "Hurricane", artist: "BUNT. feat. HON, SMBDY", src: "https://s3.deliciouspeaches.com/get/music/20220126/BUNT_feat_HON_SMBDY_-_Hurricane_73712791.mp3" },
-            { name: "Make It Bun Dem", artist: "Skrillex", src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3", videoId: "1nj2EbEIQZ0" }
-        ];
+        // ПЛЕЙЛИСТЫ
+        const playlists = {
+            chill: [
+                { name: "Mirage", artist: "Creepy Nuts", src: "https://cdn11.deliciousoranges.com/s1/get/music/20250711/Creepy_Nuts_-_Mirage_79280769.mp3" },
+                { name: "Don't tell your dreams", artist: "LOVIXX, STOSLIV", src: "https://cdn5.deliciousoranges.com/s1/get/music/20260621/LOVIXX_-_Dont_tell_your_dreams_81746473.mp3" },
+                { name: "Hilfe", artist: "Lostboi Lino", src: "https://s1.deliciouspeaches.com/get/music/20250821/Lostboi_Lino_-_Hilfe_79520224.mp3" },
+                { name: "Hurricane", artist: "BUNT. feat. HON, SMBDY", src: "https://s3.deliciouspeaches.com/get/music/20220126/BUNT_feat_HON_SMBDY_-_Hurricane_73712791.mp3" },
+                { name: "Make It Bun Dem", artist: "Skrillex", src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3", videoId: "1nj2EbEIQZ0" }
+            ],
+            nostalgia: [
+                { name: "Numb", artist: "Linkin Park", src: "https://cdn1.deliciousoranges.com/s1/get/music/20170905/Linkin_Park_-_Numb_48256498.mp3" },
+                { name: "In The End", artist: "Linkin Park", src: "https://cdn3.deliciousoranges.com/s1/get/music/20170905/Linkin_Park_-_In_The_End_48256496.mp3" },
+                { name: "Boulevard of Broken Dreams", artist: "Green Day", src: "https://cdn4.deliciousoranges.com/s1/get/music/20170905/Green_Day_-_Boulevard_Of_Broken_Dreams_48256490.mp3" },
+                { name: "The Pretender", artist: "Foo Fighters", src: "https://cdn5.deliciousoranges.com/s1/get/music/20170905/Foo_Fighters_-_The_Pretender_48256488.mp3" },
+                { name: "Bring Me To Life", artist: "Evanescence", src: "https://cdn6.deliciousoranges.com/s1/get/music/20170905/Evanescence_-_Bring_Me_To_Life_48256486.mp3" }
+            ]
+        };
 
+        let currentTab = 'chill';
         let currentTrackIndex = 0;
         let volume = 0.8;
+
+        function getCurrentTracks() {
+            return playlists[currentTab];
+        }
 
         // DOM 
         const audio = document.getElementById('audio');
@@ -262,9 +341,11 @@
         const nextBtn = document.getElementById('nextBtn');
         const volumeContainer = document.getElementById('volumeContainer');
         const volumeLevel = document.getElementById('volumeLevel');
+        const volumeThumb = document.getElementById('volumeThumb');
         const volumeValue = document.getElementById('volumeValue');
         const volumeIcon = document.getElementById('volumeIcon');
         const youtubeBg = document.getElementById('youtube-bg');
+        const tabBtns = document.querySelectorAll('.tab-btn');
 
         // ВИЗУАЛИЗАТОР
         const canvas = document.getElementById('visualizer');
@@ -426,6 +507,7 @@
         // ПЛЕЕР
         function renderTrackList() {
             trackList.innerHTML = '';
+            const tracks = getCurrentTracks();
             tracks.forEach((track, index) => {
                 const item = document.createElement('div');
                 item.className = 'track-item' + (index === currentTrackIndex ? ' active' : '');
@@ -441,7 +523,7 @@
         function loadTrack(index) {
             const wasPlaying = !audio.paused;
             currentTrackIndex = index;
-            const track = tracks[currentTrackIndex];
+            const track = getCurrentTracks()[currentTrackIndex];
             audio.src = track.src;
             trackSubtitle.textContent = `${track.artist} — ${track.name}`;
             renderTrackList();
@@ -459,12 +541,14 @@
         }
 
         function nextTrack() {
+            const tracks = getCurrentTracks();
             currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
             loadTrack(currentTrackIndex);
             audio.play().catch(e => console.warn('Play error:', e));
         }
 
         function prevTrack() {
+            const tracks = getCurrentTracks();
             currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
             loadTrack(currentTrackIndex);
             audio.play().catch(e => console.warn('Play error:', e));
@@ -505,22 +589,106 @@
             audio.currentTime = (clickX / width) * duration;
         }
 
-        function setVolume(e) {
-            const width = volumeContainer.clientWidth;
-            const clickX = e.offsetX;
-            volume = Math.max(0, Math.min(1, clickX / width));
+        // ========== ГРОМКОСТЬ: ПЕРЕТАСКИВАНИЕ ==========
+        function setVolumeFromPosition(clientX) {
+            const rect = volumeContainer.getBoundingClientRect();
+            let clickX = clientX - rect.left;
+            clickX = Math.max(0, Math.min(rect.width, clickX));
+            volume = clickX / rect.width;
             audio.volume = volume;
             updateVolumeUI();
         }
 
+        let isDraggingVolume = false;
+
+        // Mouse events
+        volumeThumb.addEventListener('mousedown', (e) => {
+            isDraggingVolume = true;
+            volumeThumb.classList.add('dragging');
+            e.preventDefault();
+        });
+
+        volumeContainer.addEventListener('mousedown', (e) => {
+            if (e.target !== volumeThumb) {
+                setVolumeFromPosition(e.clientX);
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDraggingVolume) {
+                setVolumeFromPosition(e.clientX);
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDraggingVolume) {
+                isDraggingVolume = false;
+                volumeThumb.classList.remove('dragging');
+            }
+        });
+
+        // Touch events (для мобильных)
+        volumeThumb.addEventListener('touchstart', (e) => {
+            isDraggingVolume = true;
+            volumeThumb.classList.add('dragging');
+            e.preventDefault();
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (isDraggingVolume && e.touches.length > 0) {
+                setVolumeFromPosition(e.touches[0].clientX);
+            }
+        });
+
+        document.addEventListener('touchend', () => {
+            if (isDraggingVolume) {
+                isDraggingVolume = false;
+                volumeThumb.classList.remove('dragging');
+            }
+        });
+
         function updateVolumeUI() {
             const percent = Math.round(volume * 100);
             volumeLevel.style.width = `${percent}%`;
+            volumeThumb.style.left = `${percent}%`;
             volumeValue.textContent = `${percent}%`;
             if (volume === 0) volumeIcon.textContent = '🔇';
             else if (volume < 0.5) volumeIcon.textContent = '🔉';
             else volumeIcon.textContent = '🔊';
         }
+
+        // ========== ВКЛАДКИ ==========
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                if (tab === currentTab) return;
+
+                // Обновляем активную вкладку
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                currentTab = tab;
+                currentTrackIndex = 0;
+
+                const tracks = getCurrentTracks();
+                audio.src = tracks[0].src;
+                trackSubtitle.textContent = `${tracks[0].artist} — ${tracks[0].name}`;
+
+                // Управление видео
+                if (tracks[0].videoId) {
+                    showVideo(tracks[0].videoId);
+                } else {
+                    hideVideo();
+                }
+
+                renderTrackList();
+
+                // Если играло — продолжаем играть
+                if (!audio.paused) {
+                    audio.play().catch(e => console.warn('Play error:', e));
+                }
+            });
+        });
 
         // События
         audio.addEventListener('ended', nextTrack);
@@ -530,14 +698,14 @@
         progressContainer.addEventListener('click', setProgress);
         prevBtn.addEventListener('click', prevTrack);
         nextBtn.addEventListener('click', nextTrack);
-        volumeContainer.addEventListener('click', setVolume);
 
         // Инициализация
         audio.volume = volume;
         updateVolumeUI();
         renderTrackList();
-        trackSubtitle.textContent = tracks[0].artist + ' — ' + tracks[0].name;
-        audio.src = tracks[0].src;
+        const initialTracks = getCurrentTracks();
+        trackSubtitle.textContent = initialTracks[0].artist + ' — ' + initialTracks[0].name;
+        audio.src = initialTracks[0].src;
 
         // Запуск визуализатора
         drawVisualizer();
