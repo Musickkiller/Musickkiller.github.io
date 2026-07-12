@@ -185,14 +185,7 @@
             position: relative;
             z-index: 2;
             backdrop-filter: blur(6px);
-            transition: transform 0.1s, box-shadow 0.1s;
-        }
-        .player-card.pulse {
-            animation: cardPulse 0.3s ease;
-        }
-        @keyframes cardPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.3); }
-            50% { transform: scale(1.02); box-shadow: 0 0 40px rgba(var(--primary-rgb), 0.6); }
+            transition: box-shadow 0.1s;
         }
 
         .title {
@@ -679,8 +672,8 @@
         let titleClickCount = 0;
         let searchQuery = '';
 
-        // Konami Code
-        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+        // Konami Code (упрощённый: ↑↓←→)
+        const konamiCode = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
         let konamiIndex = 0;
 
         function getCurrentTracks() {
@@ -728,30 +721,6 @@
         const cursor = document.getElementById('cursor');
         const hackOverlay = document.getElementById('hackOverlay');
         const hackText = document.getElementById('hackText');
-
-        // ========== WEB AUDIO API ==========
-        let audioContext, analyser, dataArray, source;
-        function initAudioContext() {
-            if (audioContext) return;
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioContext.createAnalyser();
-            analyser.fftSize = 256;
-            source = audioContext.createMediaElementSource(audio);
-            source.connect(analyser);
-            analyser.connect(audioContext.destination);
-            dataArray = new Uint8Array(analyser.frequencyBinCount);
-        }
-
-        function getBassLevel() {
-            if (!analyser) return 0;
-            analyser.getByteFrequencyData(dataArray);
-            // Берём первые 10 частот (басы)
-            let sum = 0;
-            for (let i = 0; i < 10; i++) {
-                sum += dataArray[i];
-            }
-            return sum / 10 / 255; // Нормализуем от 0 до 1
-        }
 
         // ========== ЭФФЕКТ ВЗЛОМА ==========
         const hackLines = [
@@ -809,18 +778,6 @@
             }, 300);
         }
         setInterval(triggerGlitch, 5000);
-
-        // ========== ПУЛЬСАЦИЯ КАРТОЧКИ ==========
-        let lastBassLevel = 0;
-        function checkBassPulse() {
-            const bass = getBassLevel();
-            if (bass > 0.7 && bass > lastBassLevel + 0.2) {
-                playerCard.classList.add('pulse');
-                setTimeout(() => playerCard.classList.remove('pulse'), 300);
-            }
-            lastBassLevel = bass;
-            requestAnimationFrame(checkBassPulse);
-        }
 
         // ========== ВИЗУАЛИЗАТОР ==========
         const canvas = document.getElementById('visualizer');
@@ -1081,7 +1038,6 @@
         function togglePlay() {
             if (audio.paused) {
                 if (!audio.src) loadTrack(0);
-                initAudioContext();
                 audio.play()
                     .then(() => {
                         playBtn.innerText = 'PAUSE';
@@ -1283,7 +1239,7 @@
 
         // ========== ГОРЯЧИЕ КЛАВИШИ ==========
         document.addEventListener('keydown', (e) => {
-            // Konami Code
+            // Konami Code (упрощённый: ↑↓←→)
             if (e.code === konamiCode[konamiIndex]) {
                 konamiIndex++;
                 if (konamiIndex === konamiCode.length) {
@@ -1400,7 +1356,6 @@
             quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
             
             drawVisualizer();
-            checkBassPulse();
         }
 
         init();
