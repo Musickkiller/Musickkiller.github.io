@@ -114,7 +114,7 @@
         }
         .category-title { color: var(--primary); font-size: 0.9rem; margin-bottom: 15px; text-align: center; text-transform: uppercase; letter-spacing: 2px; }
         
-        /* Стили для кнопок плейлистов */
+        /* Стили для кнопок плейлистов с круглыми индикаторами */
         .playlist-btn {
             width: 100%;
             padding: 12px;
@@ -143,7 +143,7 @@
             border-color: var(--primary);
         }
         .playlist-btn::before {
-            content: '☐';
+            content: '○';
             position: absolute;
             left: 12px;
             top: 50%;
@@ -151,7 +151,7 @@
             font-size: 1.2rem;
         }
         .playlist-btn.active::before {
-            content: '☑';
+            content: '●';
         }
 
         .hack-overlay {
@@ -370,7 +370,7 @@
     <div id="video-bg"></div>
     
     <div class="player-card" id="playerCard">
-        <button class="category-toggle-btn" id="categoryToggleBtn">Категории</button>
+        <button class="category-toggle-btn" id="categoryToggleBtn">Плейлисты</button>
         <div class="category-panel" id="categoryPanel">
             <div class="category-title">Плейлисты</div>
             <button class="playlist-btn active" data-playlist="all">Все треки</button>
@@ -395,9 +395,9 @@
         <div class="track-list" id="trackList"></div>
         
         <div class="nav-buttons">
-            <button class="nav-btn" id="prevBtn" title="Предыдущий (←)"></button>
+            <button class="nav-btn" id="prevBtn" title="Предыдущий (←)">◄</button>
             <button class="nav-btn" id="rouletteBtn" title="Рулетка (R)">🎰</button>
-            <button class="nav-btn" id="loopBtn" title="Режим повтора (L)"></button>
+            <button class="nav-btn" id="loopBtn" title="Режим повтора (L)">🔁</button>
             <button class="nav-btn" id="nextBtn" title="Следующий (→)">►</button>
         </div>
         
@@ -604,7 +604,7 @@
             "> Активация визуализатора... OK",
             "> Проверка секретных данных... ✓",
             "> ",
-            "> WELCOME NAHUI v5.0",
+            "> WELCOME NAHUI v2.0",
             "> Доступ разрешён.",
             "> ",
             "> Запуск плеера..."
@@ -1007,7 +1007,7 @@
         }
         function toggleLoopMode() {
             const modes = ['all', 'one', 'shuffle'];
-            const icons = ['🔁', '🔂', ''];
+            const icons = ['🔁', '🔂', '🔀'];
             const currentIndex = modes.indexOf(loopMode);
             loopMode = modes[(currentIndex + 1) % modes.length];
             loopBtn.textContent = icons[(currentIndex + 1) % modes.length];
