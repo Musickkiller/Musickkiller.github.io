@@ -62,16 +62,16 @@
 
         #visualizer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
         
+        /* ИСПРАВЛЕНО: Кнопка теперь внутри плеера, в правом верхнем углу */
         .category-toggle-btn {
             position: absolute;
-            top: 50%;
-            left: -70px;
-            transform: translateY(-50%);
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            background: var(--bg-card);
-            border: 2px solid var(--primary);
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--bg-panel);
+            border: 1px solid var(--primary);
             color: var(--primary);
             cursor: pointer;
             z-index: 99;
@@ -79,13 +79,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
         }
         .category-toggle-btn:hover {
             background: var(--primary);
             color: var(--bg-dark);
-            box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.5);
-            left: -75px;
+            box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.5);
         }
 
         .category-panel {
@@ -412,13 +411,13 @@
                 max-width: 100%;
             }
             
+            /* ИСПРАВЛЕНО: Адаптация кнопки для мобильных (чуть больше для удобного нажатия) */
             .category-toggle-btn {
                 top: 10px;
-                left: 10px;
-                right: auto;
-                width: 45px;
-                height: 45px;
-                font-size: 1.2rem;
+                right: 10px;
+                width: 44px;
+                height: 44px;
+                font-size: 1.3rem;
             }
             
             .category-panel {
@@ -510,20 +509,10 @@
     <canvas id="visualizer"></canvas>
     <div id="video-bg"></div>
     
-    <!-- Кнопка плейлистов слева от плеера -->
-    <button class="category-toggle-btn" id="categoryToggleBtn" title="Плейлисты">☰</button>
-    
-    <div class="category-panel" id="categoryPanel">
-        <button class="category-panel-close" id="categoryPanelClose" title="Закрыть">×</button>
-        <div class="category-title">Плейлисты</div>
-        <button class="playlist-btn active" data-playlist="all">Все треки</button>
-        <button class="playlist-btn" data-playlist="chill">Chill</button>
-        <button class="playlist-btn" data-playlist="nostalgia">Ностальгия</button>
-        <button class="playlist-btn" data-playlist="favorites">Избранное</button>
-        <button class="playlist-btn" data-playlist="disliked">Дизлайк</button>
-    </div>
-
     <div class="player-card" id="playerCard">
+        <!-- ИСПРАВЛЕНО: Кнопка теперь внутри карточки, в правом верхнем углу -->
+        <button class="category-toggle-btn" id="categoryToggleBtn" title="Плейлисты">☰</button>
+        
         <div class="title" id="titleText" data-text="WELCOME NAHUI">WELCOME NAHUI</div>
         
         <div class="subtitle-area">
@@ -538,7 +527,6 @@
         
         <div class="track-list" id="trackList"></div>
         
-        <!-- ИСПРАВЛЕНО: Добавлены белые 2D символы для всех кнопок -->
         <div class="nav-buttons">
             <button class="nav-btn" id="prevBtn" title="Предыдущий">◄</button>
             <button class="nav-btn" id="rouletteBtn" title="Рулетка">🎲</button>
@@ -1301,7 +1289,6 @@
             quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
             drawVisualizer();
             
-            // ИСПРАВЛЕНО: Инициализация иконки повтора при загрузке
             const modes = ['all', 'one', 'shuffle'];
             const icons = ['🔁', '🔂', '🔀'];
             loopBtn.textContent = icons[modes.indexOf(loopMode)];
