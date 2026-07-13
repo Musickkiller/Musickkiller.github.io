@@ -596,8 +596,6 @@
     </div>
 
     <canvas id="visualizer"></canvas>
-    
-    <!-- ⚡ КОНТЕЙНЕР ДЛЯ ВИДЕО-ФОНА (вместо YouTube) -->
     <div id="video-bg"></div>
 
     <div class="player-card" id="playerCard">
@@ -636,7 +634,7 @@
         </div>
 
         <div class="volume-section">
-            <span class="volume-icon" id="volumeIcon">🔊</span>
+            <span class="volume-icon" id="volumeIcon"></span>
             <div class="volume-slider-container" id="volumeContainer">
                 <div class="volume-level" id="volumeLevel"></div>
                 <div class="volume-thumb" id="volumeThumb"></div>
@@ -736,7 +734,7 @@
         const volumeThumb = document.getElementById('volumeThumb');
         const volumeValue = document.getElementById('volumeValue');
         const volumeIcon = document.getElementById('volumeIcon');
-        const videoBg = document.getElementById('video-bg'); // ⭐ изменили с youtube-bg на video-bg
+        const videoBg = document.getElementById('video-bg');
         const tabBtns = document.querySelectorAll('.tab-btn');
         const playerCard = document.getElementById('playerCard');
         const titleText = document.getElementById('titleText');
@@ -988,38 +986,34 @@
         drawMatrix();
         window.addEventListener('resize', initMatrix);
 
+        // ========== УПРАВЛЕНИЕ ВИДЕО ==========
         function showVideo(videoSrc) {
-            // Очищаем контейнер
             videoBg.innerHTML = '';
             
-            // Создаём тег <video>
             const video = document.createElement('video');
             video.src = videoSrc;
             video.autoplay = true;
             video.loop = true;
-            video.muted = true; // Обязательно для автозапуска в браузерах
-            video.playsInline = true; // Для iOS
+            video.muted = true;
+            video.playsInline = true;
             video.setAttribute('playsinline', '');
             video.setAttribute('webkit-playsinline', '');
             
-            // Обработка ошибок загрузки
             video.addEventListener('error', (e) => {
-                console.warn('⚠️ Ошибка загрузки видео:', videoSrc);
+                console.warn('️ Ошибка загрузки видео:', videoSrc);
             });
             
             videoBg.appendChild(video);
             
-            // Показываем с небольшой задержкой для плавности
             setTimeout(() => {
                 videoBg.classList.add('visible');
             }, 100);
             
-            console.log('🎬 Показ видео из файла:', videoSrc);
+            console.log('Показ видео:', videoSrc);
         }
 
         function hideVideo() {
             videoBg.classList.remove('visible');
-            // Очищаем видео после анимации
             setTimeout(() => {
                 const video = videoBg.querySelector('video');
                 if (video) {
@@ -1028,7 +1022,7 @@
                 }
                 videoBg.innerHTML = '';
             }, 1000);
-            console.log('🎬 Скрытие видео');
+            console.log('Скрытие видео');
         }
 
         // ========== ПЛЕЕР ==========
@@ -1060,10 +1054,10 @@
             renderTrackList();
             
             if (track.videoSrc) {
-                console.log('🎥 Трек имеет videoSrc:', track.videoSrc);
+                console.log(' Трек имеет видео:', track.videoSrc);
                 showVideo(track.videoSrc);
             } else {
-                console.log('🚫 Трек без videoSrc');
+                console.log('Трек без видео');
                 hideVideo();
             }
             
@@ -1301,7 +1295,7 @@
                 konamiIndex++;
                 if (konamiIndex === konamiCode.length) {
                     secretUnlocked = true;
-                    alert('🎉 СЕКРЕТНЫЙ ТРЕК РАЗБЛОКИРОВАН!');
+                    alert('СЕКРЕТНЫЙ ТРЕК РАЗБЛОКИРОВАН!');
                     renderTrackList();
                     konamiIndex = 0;
                 }
@@ -1353,7 +1347,7 @@
             titleClickCount++;
             if (titleClickCount >= 10) {
                 secretUnlocked = true;
-                alert('🎉 СЕКРЕТНЫЙ ТРЕК РАЗБЛОКИРОВАН!');
+                alert('СЕКРЕТНЫЙ ТРЕК РАЗБЛОКИРОВАН!');
                 renderTrackList();
                 titleClickCount = 0;
             }
