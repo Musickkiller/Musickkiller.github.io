@@ -104,33 +104,25 @@
             background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 100%);
         }
 
+        /* ИСПРАВЛЕНИЕ ПОРЯДКА СЛОЁВ (Z-INDEX) */
         #matrix-canvas {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: 0;
+            z-index: 0; /* Самый нижний слой */
             pointer-events: none;
             opacity: 0.15;
         }
 
-        #visualizer {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-        
         #video-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: 0;
+            z-index: 1; /* Поверх матрицы, но под визуализатором */
             pointer-events: none;
             opacity: 0;
             transition: opacity 1s ease;
             overflow: hidden;
-            background: #000;
         }
         #video-bg.visible { opacity: 1; }
         #video-bg video {
@@ -150,7 +142,15 @@
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.2); /* Немного уменьшил затемнение, чтобы видео было ярче */
+            background: rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+        }
+
+        #visualizer {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 2; /* Рисуется ПОВЕРХ видео */
             pointer-events: none;
         }
 
@@ -193,7 +193,6 @@
             51%, 100% { opacity: 0; }
         }
 
-        /* ИСПРАВЛЕНИЕ: Добавлен плавный переход для фона и размытия */
         .player-card {
             background: linear-gradient(145deg, var(--bg-card), rgba(27, 30, 38, 0.92));
             border: 2px solid var(--primary);
@@ -203,13 +202,12 @@
             width: 380px;
             text-align: center;
             position: relative;
-            z-index: 2;
+            z-index: 3; /* Поверх всего, включая визуализатор */
             backdrop-filter: blur(6px);
             transition: background 1s ease, backdrop-filter 1s ease, box-shadow 0.1s, border-color 1s ease;
             overflow: visible;
         }
 
-        /* ИСПРАВЛЕНИЕ: Класс для прозрачного фона при видео */
         .player-card.video-active {
             background: rgba(13, 14, 18, 0.25) !important;
             backdrop-filter: blur(2px);
@@ -547,7 +545,7 @@
             background: rgba(var(--primary-rgb), 0.1);
         }
 
-        /* ========== РУЛЕТКА (ВЕРТИКАЛЬНАЯ, СПРАВА, УЗКАЯ) ========== */
+        /* ========== РУЛЕТКА ========== */
         .roulette-wrapper-outer {
             position: absolute;
             top: 50%;
@@ -1117,7 +1115,6 @@
                 video.play().then(() => {
                     console.log('▶️ Видео запущено');
                     videoBg.classList.add('visible');
-                    // ИСПРАВЛЕНИЕ: Делаем фон плеера прозрачным
                     playerCard.classList.add('video-active');
                 }).catch(err => {
                     console.warn('⚠️ Ошибка автозапуска:', err);
@@ -1161,7 +1158,6 @@
 
         function hideVideo() {
             videoBg.classList.remove('visible');
-            // ИСПРАВЛЕНИЕ: Возвращаем нормальный фон плеера
             playerCard.classList.remove('video-active');
             
             setTimeout(() => {
