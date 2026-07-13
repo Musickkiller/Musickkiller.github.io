@@ -783,7 +783,6 @@
         }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-
         function drawWave(wave, time, volumeFactor) {
             const WIDTH = canvas.width, HEIGHT = canvas.height, baseY = HEIGHT * wave.y, amp = wave.amplitude * volumeFactor;
             ctx.beginPath(); ctx.moveTo(0, HEIGHT);
@@ -821,7 +820,6 @@
                 ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
             }
         }
-
         function drawGlow(volumeFactor) {
             const WIDTH = canvas.width, HEIGHT = canvas.height, centerX = WIDTH / 2, centerY = HEIGHT * 0.7;
             const radius = Math.max(WIDTH, HEIGHT) * 0.5;
@@ -874,13 +872,14 @@
                 ctx.fill();
                 ctx.restore();
             }
+            const stemLength = size * 0.9;
+            const stemTopWidth = size * 0.05;
+            const stemBottomWidth = size * 0.015;
             ctx.beginPath();
-            ctx.moveTo(-size * 0.02, 0);
-            ctx.lineTo(-size * 0.06, size * 0.4);
-            ctx.lineTo(-size * 0.1, size * 0.85);
-            ctx.lineTo(-size * 0.08, size * 0.9);
-            ctx.lineTo(-size * 0.04, size * 0.45);
-            ctx.lineTo(size * 0.02, size * 0.05);
+            ctx.moveTo(-stemTopWidth, 0);
+            ctx.lineTo(-stemBottomWidth, stemLength);
+            ctx.lineTo(stemBottomWidth, stemLength);
+            ctx.lineTo(stemTopWidth, 0);
             ctx.closePath();
             ctx.fill();
             ctx.restore();
