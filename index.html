@@ -41,7 +41,6 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        /* КАСТОМНЫЙ КУРСОР */
         body { cursor: none; }
         .custom-cursor {
             position: fixed;
@@ -83,7 +82,6 @@
             position: relative;
         }
         
-        /* CRT ЭФФЕКТ */
         .crt-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -106,7 +104,6 @@
             background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 100%);
         }
 
-        /* МАТРИЧНЫЙ ДОЖДЬ */
         #matrix-canvas {
             position: fixed;
             top: 0; left: 0;
@@ -124,7 +121,6 @@
             pointer-events: none;
         }
         
-        /* ВИДЕО ФОН */
         #video-bg {
             position: fixed;
             top: 0; left: 0;
@@ -136,9 +132,7 @@
             overflow: hidden;
             background: #000;
         }
-        #video-bg.visible {
-            opacity: 1;
-        }
+        #video-bg.visible { opacity: 1; }
         #video-bg video {
             position: absolute;
             top: 50%;
@@ -151,8 +145,6 @@
             object-fit: cover;
             pointer-events: none;
         }
-        
-        /* Затемнение поверх видео */
         #video-bg::after {
             content: '';
             position: absolute;
@@ -162,7 +154,6 @@
             pointer-events: none;
         }
 
-        /* ЭФФЕКТ ВЗЛОМА */
         .hack-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -214,7 +205,7 @@
             z-index: 2;
             backdrop-filter: blur(6px);
             transition: box-shadow 0.1s;
-            overflow: visible; /* Важно для выезда рулетки */
+            overflow: visible;
         }
 
         .title {
@@ -228,7 +219,6 @@
             cursor: pointer;
         }
         
-        /* ГЛИТЧ ЭФФЕКТ */
         .title.glitch::before,
         .title.glitch::after {
             content: attr(data-text);
@@ -270,7 +260,6 @@
             min-height: 1.2em;
         }
 
-        /* ПОИСК */
         .search-input {
             width: 100%;
             padding: 8px 12px;
@@ -284,12 +273,8 @@
             outline: none;
             transition: border-color 0.3s;
         }
-        .search-input:focus {
-            border-color: var(--primary);
-        }
-        .search-input::placeholder {
-            color: var(--text-dim);
-        }
+        .search-input:focus { border-color: var(--primary); }
+        .search-input::placeholder { color: var(--text-dim); }
 
         .tabs {
             display: flex;
@@ -312,10 +297,7 @@
             letter-spacing: 1px;
             transition: all 0.3s ease;
         }
-        .tab-btn:hover {
-            background: var(--border);
-            color: var(--text);
-        }
+        .tab-btn:hover { background: var(--border); color: var(--text); }
         .tab-btn.active {
             background: rgba(var(--primary-rgb), 0.15);
             color: var(--primary);
@@ -491,7 +473,6 @@
             color: var(--bg-dark);
         }
 
-        /* НИЖНИЕ КНОПКИ */
         .bottom-controls {
             display: flex;
             justify-content: center;
@@ -514,7 +495,6 @@
             color: var(--primary);
         }
 
-        /* ЦИТАТА */
         .quote {
             margin-top: 15px;
             font-size: 0.7rem;
@@ -524,7 +504,6 @@
             opacity: 0.7;
         }
 
-        /* ПАНЕЛЬ ИСТОРИИ */
         .history-panel {
             position: absolute;
             top: 100%;
@@ -560,13 +539,13 @@
             background: rgba(var(--primary-rgb), 0.1);
         }
 
-        /* ========== РУЛЕТКА (ИСПРАВЛЕНА: ВЫЕЗЖАЕТ СПРАВА) ========== */
+        /* ========== РУЛЕТКА (ВЕРТИКАЛЬНАЯ, СПРАВА, УЗКАЯ) ========== */
         .roulette-wrapper-outer {
             position: absolute;
             top: 50%;
-            right: -300px; /* Спрятано справа за пределами карточки */
+            left: calc(100% + 20px); /* Справа от плеера */
             transform: translateY(-50%) translateX(40px);
-            width: 280px;
+            width: 240px; /* Уже, как просили */
             z-index: 100;
             pointer-events: none;
             opacity: 0;
@@ -574,7 +553,6 @@
         }
         
         .roulette-wrapper-outer.visible {
-            right: -280px; /* Конечная позиция справа от карточки */
             transform: translateY(-50%) translateX(0);
             opacity: 1;
             pointer-events: auto;
@@ -586,15 +564,16 @@
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.5);
+            backdrop-filter: blur(6px); /* Стиль как у плеера */
         }
         
         .roulette-title {
             color: var(--primary);
-            font-size: 1rem;
+            font-size: 0.9rem;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             font-weight: bold;
             text-shadow: 0 0 10px rgba(var(--primary-rgb), 0.5);
         }
@@ -605,21 +584,21 @@
             border-radius: 8px;
             border: 1px solid var(--border);
             background: var(--bg-panel);
-            width: 280px; /* Фиксированная ширина для точного расчета */
-            height: 80px;
+            width: 100%;
+            height: 240px; /* Показывает ровно 3 трека (3 * 80px) */
         }
         
-        /* Указатель сверху */
+        /* Указатель СПРАВА */
         .roulette-pointer {
             position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 50%;
+            right: -14px;
+            transform: translateY(-50%);
             width: 0;
             height: 0;
-            border-left: 12px solid transparent;
-            border-right: 12px solid transparent;
-            border-top: 16px solid var(--primary);
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            border-right: 16px solid var(--primary); /* Смотрит влево */
             z-index: 10;
             filter: drop-shadow(0 0 10px rgba(var(--primary-rgb), 0.8));
         }
@@ -628,40 +607,37 @@
         .roulette-pointer::after {
             content: '';
             position: absolute;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 2px;
-            height: 100px;
-            background: linear-gradient(to bottom, var(--primary), transparent);
+            top: 50%;
+            right: 16px;
+            transform: translateY(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(to left, var(--primary), transparent);
             opacity: 0.5;
         }
         
         .roulette-track-list {
             display: flex;
+            flex-direction: column; /* ВЕРТИКАЛЬНАЯ ПРОКРУТКА */
             gap: 0;
             will-change: transform;
-            height: 100%;
-            align-items: center;
         }
         
         .roulette-track-item {
-            flex: 0 0 140px; /* Фиксированная ширина для точного расчета */
-            padding: 12px 10px;
+            flex: 0 0 80px; /* ФИКСИРОВАННАЯ ВЫСОТА 80px для точной математики */
+            width: 100%;
+            padding: 10px;
             text-align: center;
             background: var(--bg-panel);
-            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
             font-size: 0.75rem;
             color: var(--text-dim);
-            transition: all 0.3s;
-            height: 60px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            transition: all 0.3s;
         }
-        .roulette-track-item:last-child {
-            border-right: none;
-        }
+        .roulette-track-item:last-child { border-bottom: none; }
         .roulette-track-item.winner {
             background: rgba(var(--primary-rgb), 0.3);
             color: var(--primary);
@@ -688,13 +664,13 @@
         
         .roulette-result {
             margin-top: 15px;
-            padding: 12px;
+            padding: 10px;
             background: rgba(var(--primary-rgb), 0.15);
             border: 1px solid var(--primary);
             border-radius: 6px;
             text-align: center;
             color: var(--primary);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             opacity: 0;
             transform: translateY(10px);
             transition: all 0.5s;
@@ -704,7 +680,6 @@
             transform: translateY(0);
         }
 
-        /* RIPPLE ЭФФЕКТ */
         .ripple {
             position: fixed;
             border-radius: 50%;
@@ -715,10 +690,7 @@
             z-index: 9997;
         }
         @keyframes rippleAnim {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
+            to { transform: scale(4); opacity: 0; }
         }
     </style>
 </head>
@@ -749,7 +721,6 @@
 
         <div class="nav-buttons">
             <button class="nav-btn" id="prevBtn" title="Предыдущий (←)">◄</button>
-            <!-- ИСПРАВЛЕНИЕ 1: Вернута иконка 🎰 -->
             <button class="nav-btn" id="rouletteBtn" title="Рулетка (R)">🎰</button>
             <button class="nav-btn" id="loopBtn" title="Режим повтора (L)">🔁</button>
             <button class="nav-btn" id="nextBtn" title="Следующий (→)">►</button>
@@ -805,19 +776,19 @@
     </div>
 
     <script>
-        // ========== КОНФИГУРАЦИЯ ==========
         const playlists = {
             chill: [
                 { name: "Mirage", artist: "Creepy Nuts", src: "https://cdn11.deliciousoranges.com/s1/get/music/20250711/Creepy_Nuts_-_Mirage_79280769.mp3" },
                 { name: "Don't tell your dreams", artist: "LOVIXX, STOSLIV", src: "https://cdn5.deliciousoranges.com/s1/get/music/20260621/LOVIXX_-_Dont_tell_your_dreams_81746473.mp3" },
                 { name: "Hilfe", artist: "Lostboi Lino", src: "https://s1.deliciouspeaches.com/get/music/20250821/Lostboi_Lino_-_Hilfe_79520224.mp3" },
                 { name: "Hurricane", artist: "BUNT. feat. HON, SMBDY", src: "https://s3.deliciouspeaches.com/get/music/20220126/BUNT_feat_HON_SMBDY_-_Hurricane_73712791.mp3" },
-                { name: "Make It Bun Dem", artist: "Skrillex", src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3", videoSrc: "https://github.com/Musickkiller/Musickkiller.github.io/blob/main/FAR%20CRY%203%20_%20MAKE%20IT%20BUN%20DEM%20_%20EDIT.mp4" }
+                // ИСПРАВЛЕНИЕ: Ссылка на RAW файл GitHub, а не на страницу /blob/
+                { name: "Make It Bun Dem", artist: "Skrillex", src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3", videoSrc: "https://raw.githubusercontent.com/Musickkiller/Musickkiller.github.io/main/FAR%20CRY%203%20_%20MAKE%20IT%20BUN%20DEM%20_%20EDIT.mp4" }
             ],
             nostalgia: [
                 { name: "Nine Thou", artist: "Styles of Beyond", src: "https://s4.deliciouspeaches.com/get/music/20101112/Styles_of_Beyond_-_Nine_thou_19741.mp3" },
                 { name: "Ezio's Family", artist: "Jesper Kyd", src: "https://s2.deliciouspeaches.com/get/music/20181231/Jesper_Kyd_-_Ezios_Family_61237442.mp3" },
-                { name: "Make It Bun Dem", artist: "Skrillex", src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3", videoSrc: "https://github.com/Musickkiller/Musickkiller.github.io/blob/main/FAR%20CRY%203%20_%20MAKE%20IT%20BUN%20DEM%20_%20EDIT.mp4" },
+                { name: "Make It Bun Dem", artist: "Skrillex", src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3", videoSrc: "https://raw.githubusercontent.com/Musickkiller/Musickkiller.github.io/main/FAR%20CRY%203%20_%20MAKE%20IT%20BUN%20DEM%20_%20EDIT.mp4" },
                 { name: "Loonboon", artist: "Laura Shigihara", src: "https://s3.deliciouspeaches.com/get/music/20230429/Laura_Shigihara_OST_PvZ_-_Loonboon_75886511.mp3" },
                 { name: "Minecraft", artist: "C418", src: "https://cdn20.deliciousoranges.com/s1/get/music/20260403/C418_-_Minecraft_81201046.mp3" },
                 { name: "Wasteland 2 (ost Stalker Shadow of Chernobyl)", artist: "MoozE", src: "https://s4.deliciouspeaches.com/get/music/20190419/MoozE_-_Wasteland_ost_Stalker_Shadow_of_Chernobyl_63616693.mp3" },
@@ -838,7 +809,6 @@
 
         const themes = ['default', 'blue', 'purple', 'red', 'rad'];
         let currentThemeIndex = 0;
-
         let currentTab = 'chill';
         let currentTrackIndex = 0;
         let volume = 0.8;
@@ -847,25 +817,18 @@
         let secretUnlocked = false;
         let titleClickCount = 0;
         let searchQuery = '';
-
         const konamiCode = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
         let konamiIndex = 0;
 
         function getCurrentTracks() {
             let tracks = [...playlists[currentTab]];
-            if (secretUnlocked) {
-                tracks = tracks.concat(playlists.secret);
-            }
+            if (secretUnlocked) tracks = tracks.concat(playlists.secret);
             if (searchQuery) {
-                tracks = tracks.filter(t => 
-                    t.name.toLowerCase().includes(searchQuery) || 
-                    t.artist.toLowerCase().includes(searchQuery)
-                );
+                tracks = tracks.filter(t => t.name.toLowerCase().includes(searchQuery) || t.artist.toLowerCase().includes(searchQuery));
             }
             return tracks;
         }
 
-        // ========== DOM ==========
         const audio = document.getElementById('audio');
         const playBtn = document.getElementById('playBtn');
         const progress = document.getElementById('progress');
@@ -901,7 +864,6 @@
         const rouletteTrackList = document.getElementById('rouletteTrackList');
         const rouletteResult = document.getElementById('rouletteResult');
 
-        // ========== ЭФФЕКТ ВЗЛОМА ==========
         const hackLines = [
             "> Инициализация системы...",
             "> Подключение к серверу: 192.168.1.666",
@@ -933,7 +895,6 @@
             hackOverlay.classList.add('hidden');
         }
 
-        // ========== TYPEWRITER EFFECT ==========
         let typewriterTimeout;
         function typeWriter(text, element, speed = 50) {
             clearTimeout(typewriterTimeout);
@@ -949,16 +910,12 @@
             type();
         }
 
-        // ========== ГЛИТЧ ЭФФЕКТ ==========
         function triggerGlitch() {
             titleText.classList.add('glitch');
-            setTimeout(() => {
-                titleText.classList.remove('glitch');
-            }, 300);
+            setTimeout(() => titleText.classList.remove('glitch'), 300);
         }
         setInterval(triggerGlitch, 5000);
 
-        // ========== ВИЗУАЛИЗАТОР ==========
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
 
@@ -976,11 +933,9 @@
         ];
 
         let particles = [];
-        const PARTICLE_COUNT = 50;
-
         function initParticles() {
             particles = [];
-            for (let i = 0; i < PARTICLE_COUNT; i++) {
+            for (let i = 0; i < 50; i++) {
                 particles.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
@@ -1006,17 +961,14 @@
 
             ctx.beginPath();
             ctx.moveTo(0, HEIGHT);
-
             for (let x = 0; x <= WIDTH; x += 4) {
                 const y = baseY +
                     Math.sin(x * wave.frequency + time * wave.speed + wave.phase) * amp +
                     Math.sin(x * wave.frequency * 2.3 + time * wave.speed * 1.5) * amp * 0.3 +
                     Math.sin(x * wave.frequency * 0.5 + time * wave.speed * 0.7) * amp * 0.5;
-
                 if (x === 0) ctx.lineTo(0, y);
                 else ctx.lineTo(x, y);
             }
-
             ctx.lineTo(WIDTH, HEIGHT);
             ctx.closePath();
 
@@ -1030,7 +982,6 @@
 
         function drawParticles(time, volumeFactor) {
             const primaryRGB = getComputedStyle(document.documentElement).getPropertyValue('--primary-rgb').trim();
-            
             for (const p of particles) {
                 const parallaxFactor = 0.5 + p.layer * 0.5;
                 p.x += p.speedX * parallaxFactor;
@@ -1074,7 +1025,6 @@
             grad.addColorStop(0, `rgba(${primaryRGB}, ${alpha})`);
             grad.addColorStop(0.5, `rgba(${primaryRGB}, ${alpha * 0.3})`);
             grad.addColorStop(1, `rgba(${primaryRGB}, 0)`);
-
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, WIDTH, HEIGHT);
         }
@@ -1082,16 +1032,13 @@
         let time = 0;
         function drawVisualizer() {
             requestAnimationFrame(drawVisualizer);
-
             const WIDTH = canvas.width;
             const HEIGHT = canvas.height;
-
             ctx.fillStyle = 'rgba(13, 14, 18, 0.25)';
             ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
             const isPlaying = !audio.paused && !audio.ended;
             const volumeFactor = isPlaying ? Math.max(0.3, volume) : 0.3;
-
             time += 1;
 
             drawGlow(volumeFactor);
@@ -1099,7 +1046,6 @@
             drawParticles(time, volumeFactor);
         }
 
-        // ========== МАТРИЧНЫЙ ДОЖДЬ ==========
         const matrixCanvas = document.getElementById('matrix-canvas');
         const matrixCtx = matrixCanvas.getContext('2d');
         let matrixColumns = [];
@@ -1119,14 +1065,12 @@
             const primaryRGB = getComputedStyle(document.documentElement).getPropertyValue('--primary-rgb').trim();
             matrixCtx.fillStyle = 'rgba(13, 14, 18, 0.05)';
             matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
-            
             matrixCtx.fillStyle = `rgba(${primaryRGB}, 0.5)`;
             matrixCtx.font = '15px monospace';
 
             for (let i = 0; i < matrixColumns.length; i++) {
                 const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
                 matrixCtx.fillText(char, i * 20, matrixColumns[i]);
-                
                 if (matrixColumns[i] > matrixCanvas.height && Math.random() > 0.975) {
                     matrixColumns[i] = 0;
                 }
@@ -1139,13 +1083,11 @@
         drawMatrix();
         window.addEventListener('resize', initMatrix);
 
-        // ========== УПРАВЛЕНИЕ ВИДЕО ==========
         let videoLoadAttempts = 0;
         const MAX_VIDEO_ATTEMPTS = 3;
         
         function showVideo(videoSrc) {
             console.log('🎬 Попытка показать видео:', videoSrc, '(попытка', videoLoadAttempts + 1, ')');
-            
             videoBg.innerHTML = '';
             
             const video = document.createElement('video');
@@ -1186,11 +1128,9 @@
                 
                 if (videoLoadAttempts < MAX_VIDEO_ATTEMPTS) {
                     console.log('🔄 Повторная попытка загрузки через 2 секунды...');
-                    setTimeout(() => {
-                        showVideo(videoSrc);
-                    }, 2000);
+                    setTimeout(() => showVideo(videoSrc), 2000);
                 } else {
-                    console.warn('⚠️ Видео не удалось загрузить после', MAX_VIDEO_ATTEMPTS, 'попыток. Проверьте ссылку или хостинг.');
+                    console.warn('⚠️ Видео не удалось загрузить после', MAX_VIDEO_ATTEMPTS, 'попыток. Убедитесь, что это прямая ссылка на RAW файл.');
                     hideVideo();
                 }
                 
@@ -1205,9 +1145,7 @@
             video.load();
             
             setTimeout(() => {
-                if (!videoLoaded && video.readyState >= 2) {
-                    onCanPlay();
-                }
+                if (!videoLoaded && video.readyState >= 2) onCanPlay();
             }, 1500);
             
             console.log('🎥 Видео добавлено в DOM');
@@ -1227,7 +1165,6 @@
             }, 1000);
         }
 
-        // ========== ПЛЕЕР ==========
         function renderTrackList() {
             trackList.innerHTML = '';
             const tracks = getCurrentTracks();
@@ -1327,7 +1264,6 @@
             audio.currentTime = (clickX / rect.width) * duration;
         }
 
-        // ========== ГРОМКОСТЬ ==========
         function setVolumeFromPosition(clientX) {
             const rect = volumeContainer.getBoundingClientRect();
             let clickX = clientX - rect.left;
@@ -1388,7 +1324,7 @@
             else volumeIcon.textContent = '🔊';
         }
 
-        // ========== РУЛЕТКА (ИСПРАВЛЕНА МАТЕМАТИКА ПОЗИЦИОНИРОВАНИЯ) ==========
+        // ========== ВЕРТИКАЛЬНАЯ РУЛЕТКА С ТОЧНОЙ МАТЕМАТИКОЙ ==========
         let isRouletting = false;
         
         function startRoulette() {
@@ -1397,13 +1333,12 @@
             
             const tracks = getCurrentTracks();
             if (tracks.length === 0) {
-                console.warn('Нет треков для рулетки');
                 isRouletting = false;
                 return;
             }
             
             rouletteTrackList.innerHTML = '';
-            const repeats = 15;
+            const repeats = 20; // Крутим дольше для эффекта
             
             for (let r = 0; r < repeats; r++) {
                 tracks.forEach((track, index) => {
@@ -1421,17 +1356,25 @@
             rouletteWrapper.classList.add('visible');
             rouletteResult.classList.remove('visible');
             rouletteResult.textContent = '';
+            
             const winnerIndex = Math.floor(Math.random() * tracks.length);
             const winnerTrack = tracks[winnerIndex];
-            const itemWidth = 140;
-            const windowWidth = rouletteContainer.querySelector('.roulette-window').offsetWidth;
-            const centerOffset = (windowWidth / 2) - (itemWidth / 2);
-            const targetRepeat = 8 + Math.floor(Math.random() * 4);
+            
+            // МАТЕМАТИКА ВЕРТИКАЛЬНОЙ РУЛЕТКИ
+            const itemHeight = 80; // Должно строго совпадать с CSS flex: 0 0 80px
+            const windowHeight = 240; // Должно строго совпадать с CSS height: 240px
+            const centerOffset = (windowHeight / 2) - (itemHeight / 2); // (240/2) - (80/2) = 80
+            
+            const targetRepeat = 12 + Math.floor(Math.random() * 5);
             const targetItemIndex = (targetRepeat * tracks.length) + winnerIndex;
-            const targetItemLeftEdge = targetItemIndex * itemWidth;
-            const endPosition = centerOffset - targetItemLeftEdge;
+            const targetItemTopEdge = targetItemIndex * itemHeight;
+            
+            // Мы хотим, чтобы верхний край выигрышного элемента оказался на позиции centerOffset
+            const endPosition = centerOffset - targetItemTopEdge;
+            
             let currentPosition = -centerOffset;
-            rouletteTrackList.style.transform = `translateX(${currentPosition}px)`;
+            rouletteTrackList.style.transform = `translateY(${currentPosition}px)`;
+            
             const startTime = Date.now();
             const duration = 5000;
             const startPosition = currentPosition;
@@ -1439,9 +1382,10 @@
             function animate() {
                 const elapsed = Date.now() - startTime;
                 const progress = Math.min(elapsed / duration, 1);
-                const easeOut = 1 - Math.pow(1 - progress, 4);
+                const easeOut = 1 - Math.pow(1 - progress, 4); // Плавное замедление
                 const currentPos = startPosition + (endPosition - startPosition) * easeOut;
-                rouletteTrackList.style.transform = `translateX(${currentPos}px)`;
+                
+                rouletteTrackList.style.transform = `translateY(${currentPos}px)`;
                 
                 if (progress < 1) {
                     requestAnimationFrame(animate);
@@ -1478,7 +1422,6 @@
             }, 2500);
         }
 
-        // ========== РЕЖИМ ПОВТОРА ==========
         function toggleLoopMode() {
             const modes = ['all', 'one', 'shuffle'];
             const icons = ['🔁', '🔂', '🔀'];
@@ -1489,7 +1432,6 @@
             loopBtn.title = `Режим: ${loopMode === 'all' ? 'Повтор всех' : loopMode === 'one' ? 'Повтор одного' : 'Перемешивание'}`;
         }
 
-        // ========== ИСТОРИЯ ==========
         function addToHistory(track) {
             history.unshift({ name: track.name, artist: track.artist, src: track.src });
             if (history.length > 10) history.pop();
@@ -1511,7 +1453,6 @@
             });
         }
 
-        // ========== ТЕМЫ ==========
         function cycleTheme() {
             currentThemeIndex = (currentThemeIndex + 1) % themes.length;
             const theme = themes[currentThemeIndex];
@@ -1522,14 +1463,12 @@
             }
         }
 
-        // ========== ПОИСК ==========
         searchInput.addEventListener('input', (e) => {
             searchQuery = e.target.value.toLowerCase();
             currentTrackIndex = 0;
             renderTrackList();
         });
 
-        // ========== ВКЛАДКИ ==========
         tabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const tab = btn.dataset.tab;
@@ -1549,14 +1488,11 @@
                 } else {
                     hideVideo();
                 }
-
                 renderTrackList();
-
                 if (!audio.paused) audio.play().catch(e => console.warn('Play error:', e));
             });
         });
 
-        // ========== ГОРЯЧИЕ КЛАВИШИ ==========
         document.addEventListener('keydown', (e) => {
             if (e.code === konamiCode[konamiIndex]) {
                 konamiIndex++;
@@ -1572,43 +1508,17 @@
 
             if (e.target.tagName === 'INPUT') return;
             switch(e.code) {
-                case 'Space':
-                    e.preventDefault();
-                    togglePlay();
-                    break;
-                case 'ArrowLeft':
-                    prevTrack();
-                    break;
-                case 'ArrowRight':
-                    nextTrack();
-                    break;
-                case 'ArrowUp':
-                    e.preventDefault();
-                    volume = Math.min(1, volume + 0.1);
-                    audio.volume = volume;
-                    updateVolumeUI();
-                    break;
-                case 'ArrowDown':
-                    e.preventDefault();
-                    volume = Math.max(0, volume - 0.1);
-                    audio.volume = volume;
-                    updateVolumeUI();
-                    break;
-                case 'KeyM':
-                    volume = volume === 0 ? 0.8 : 0;
-                    audio.volume = volume;
-                    updateVolumeUI();
-                    break;
-                case 'KeyR':
-                    startRoulette();
-                    break;
-                case 'KeyL':
-                    toggleLoopMode();
-                    break;
+                case 'Space': e.preventDefault(); togglePlay(); break;
+                case 'ArrowLeft': prevTrack(); break;
+                case 'ArrowRight': nextTrack(); break;
+                case 'ArrowUp': e.preventDefault(); volume = Math.min(1, volume + 0.1); audio.volume = volume; updateVolumeUI(); break;
+                case 'ArrowDown': e.preventDefault(); volume = Math.max(0, volume - 0.1); audio.volume = volume; updateVolumeUI(); break;
+                case 'KeyM': volume = volume === 0 ? 0.8 : 0; audio.volume = volume; updateVolumeUI(); break;
+                case 'KeyR': startRoulette(); break;
+                case 'KeyL': toggleLoopMode(); break;
             }
         });
 
-        // ========== КЛИК ПО ЛОГОТИПУ (СЕКРЕТ) ==========
         titleText.addEventListener('click', () => {
             titleClickCount++;
             if (titleClickCount >= 10) {
@@ -1620,16 +1530,13 @@
             setTimeout(() => titleClickCount = 0, 2000);
         });
 
-        // ========== КАСТОМНЫЙ КУРСОР ==========
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
-
         document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
         document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
 
-        // ========== RIPPLE ЭФФЕКТ ==========
         document.addEventListener('click', (e) => {
             const ripple = document.createElement('div');
             ripple.className = 'ripple';
@@ -1641,16 +1548,11 @@
             setTimeout(() => ripple.remove(), 600);
         });
 
-        // ========== КНОПКИ ==========
-        historyBtn.addEventListener('click', () => {
-            historyPanel.classList.toggle('visible');
-        });
-
+        historyBtn.addEventListener('click', () => historyPanel.classList.toggle('visible'));
         themeBtn.addEventListener('click', cycleTheme);
         rouletteBtn.addEventListener('click', startRoulette);
         loopBtn.addEventListener('click', toggleLoopMode);
 
-        // ========== СОБЫТИЯ ==========
         audio.addEventListener('ended', nextTrack);
         playBtn.addEventListener('click', togglePlay);
         audio.addEventListener('timeupdate', updateProgress);
@@ -1659,7 +1561,6 @@
         prevBtn.addEventListener('click', prevTrack);
         nextBtn.addEventListener('click', nextTrack);
 
-        // ========== ИНИЦИАЛИЗАЦИЯ ==========
         async function init() {
             await playHackEffect();
             audio.volume = volume;
