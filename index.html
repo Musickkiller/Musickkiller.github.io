@@ -841,30 +841,29 @@
             for (let i = 0; i < leafletCount; i++) {
                 const angle = angles[i] * Math.PI / 180;
                 const length = size * lengths[i];
-                const width = size * 0.06;
-                ctx.save();
+                const width = size * 0.06;ctx.save();
                 ctx.rotate(angle);
                 ctx.beginPath();
                 ctx.moveTo(0, 0);
                 const teethCount = 7;
                 for (let t = 0; t <= teethCount; t++) {
                     const progress = t / teethCount;
-                    const x = -length * progress;
-                    let y = -width * (1 - progress * 0.7);
+                    const y = -length * progress;
+                    let x = -width * (1 - progress * 0.7);
                     if (t > 0 && t < teethCount) {
                         const toothSize = width * 0.6;
-                        y -= toothSize * Math.sin(progress * Math.PI);
+                        x -= toothSize * Math.sin(progress * Math.PI);
                     }
                     ctx.lineTo(x, y);
                 }
-                ctx.lineTo(-length, -width * 0.2);
+                ctx.lineTo(-width * 0.2, -length);
                 for (let t = teethCount; t >= 0; t--) {
                     const progress = t / teethCount;
-                    const x = -length * progress;
-                    let y = width * (1 - progress * 0.7);
+                    const y = -length * progress;
+                    let x = width * (1 - progress * 0.7);
                     if (t > 0 && t < teethCount) {
                         const toothSize = width * 0.6;
-                        y += toothSize * Math.sin(progress * Math.PI);
+                        x += toothSize * Math.sin(progress * Math.PI);
                     }
                     ctx.lineTo(x, y);
                 }
@@ -872,7 +871,7 @@
                 ctx.fill();
                 ctx.restore();
             }
-            const stemLength = size * 0.180;
+            const stemLength = size * 0.9;
             const stemTopWidth = size * 0.05;
             const stemBottomWidth = size * 0.015;
             ctx.beginPath();
