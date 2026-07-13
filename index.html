@@ -61,6 +61,7 @@
         }
 
         #visualizer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        
         .category-toggle-btn {
             position: absolute;
             top: 50%;
@@ -78,6 +79,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.5rem;
         }
         .category-toggle-btn:hover {
             background: var(--primary);
@@ -269,9 +271,9 @@
         
         .volume-section { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .volume-icon { 
-            font-size: 1rem; 
+            font-size: 1.2rem; 
             color: var(--primary); 
-            min-width: 20px;
+            min-width: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -336,7 +338,6 @@
         }
         .history-item:hover { color: var(--primary); background: rgba(var(--primary-rgb), 0.1); }
 
-        /* Рулетка теперь видна на мобильных - появляется над плеером */
         .roulette-wrapper-outer {
             position: fixed;
             top: 50%;
@@ -451,7 +452,6 @@
                 font-size: 0.8rem;
             }
             
-            /* Рулетка теперь видна на мобильных */
             .roulette-wrapper-outer {
                 display: block;
                 width: 90%;
@@ -511,7 +511,7 @@
     <div id="video-bg"></div>
     
     <!-- Кнопка плейлистов слева от плеера -->
-    <button class="category-toggle-btn" id="categoryToggleBtn" title="Плейlists">☰</button>
+    <button class="category-toggle-btn" id="categoryToggleBtn" title="Плейлисты">☰</button>
     
     <div class="category-panel" id="categoryPanel">
         <button class="category-panel-close" id="categoryPanelClose" title="Закрыть">×</button>
@@ -538,17 +538,18 @@
         
         <div class="track-list" id="trackList"></div>
         
+        <!-- ИСПРАВЛЕНО: Добавлены белые 2D символы для всех кнопок -->
         <div class="nav-buttons">
-            <button class="nav-btn" id="prevBtn" title="Предыдущий (←)"></button>
-            <button class="nav-btn" id="rouletteBtn" title="Рулетка (R)">🎲</button>
-            <button class="nav-btn" id="loopBtn" title="Режим повтора (L)"></button>
-            <button class="nav-btn" id="nextBtn" title="Следующий (→)">►</button>
+            <button class="nav-btn" id="prevBtn" title="Предыдущий">◄</button>
+            <button class="nav-btn" id="rouletteBtn" title="Рулетка">🎲</button>
+            <button class="nav-btn" id="loopBtn" title="Режим повтора">🔁</button>
+            <button class="nav-btn" id="nextBtn" title="Следующий">►</button>
         </div>
         
         <audio id="audio" preload="auto"></audio>
         
         <div class="controls">
-            <button class="play-btn" id="playBtn">▶</button>
+            <button class="play-btn" id="playBtn">▶ PLAY</button>
         </div>
         
         <div class="progress-container" id="progressContainer">
@@ -581,7 +582,6 @@
             <div id="historyList"></div>
         </div>
         
-        <!-- Рулетка теперь по центру экрана -->
         <div class="roulette-wrapper-outer" id="rouletteWrapper">
             <div class="roulette-container" id="rouletteContainer">
                 <div class="roulette-title">РУЛЕТКА</div>
@@ -1014,14 +1014,12 @@
         document.addEventListener('touchmove', (e) => { if (isDraggingVolume && e.touches.length > 0) setVolumeFromPosition(e.touches[0].clientX); });
         document.addEventListener('touchend', () => { if (isDraggingVolume) { isDraggingVolume = false; volumeThumb.classList.remove('dragging'); } });
 
-        // Динамическая иконка громкости
         function updateVolumeUI() {
             const percent = Math.round(volume * 100);
             volumeLevel.style.width = `${percent}%`; 
             volumeThumb.style.left = `${percent}%`;
             volumeValue.textContent = `${percent}%`;
             
-            // Меняем иконку в зависимости от громкости
             if (volume === 0) {
                 volumeIcon.textContent = '🔇';
             } else if (volume < 0.3) {
@@ -1029,7 +1027,7 @@
             } else if (volume < 0.7) {
                 volumeIcon.textContent = '🔉';
             } else {
-                volumeIcon.textContent = '';
+                volumeIcon.textContent = '🔊';
             }
         }
         function updateLikeDislikeUI(track) {
@@ -1161,7 +1159,7 @@
         }
         function toggleLoopMode() {
             const modes = ['all', 'one', 'shuffle'];
-            const icons = ['⟲', '🔂', '🔀'];
+            const icons = ['🔁', '🔂', '🔀'];
             const currentIndex = modes.indexOf(loopMode);
             loopMode = modes[(currentIndex + 1) % modes.length];
             loopBtn.textContent = icons[(currentIndex + 1) % modes.length];
@@ -1302,6 +1300,11 @@
             loadTrack(currentTrackIndex, false);
             quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
             drawVisualizer();
+            
+            // ИСПРАВЛЕНО: Инициализация иконки повтора при загрузке
+            const modes = ['all', 'one', 'shuffle'];
+            const icons = ['🔁', '🔂', '🔀'];
+            loopBtn.textContent = icons[modes.indexOf(loopMode)];
         }
         init();
     </script>
