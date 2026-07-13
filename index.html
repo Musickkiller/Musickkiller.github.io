@@ -62,15 +62,14 @@
 
         #visualizer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
         
-        /* ИСПРАВЛЕНО: Квадратная кнопка со скругленными углами и текстом */
         .category-toggle-btn {
             position: absolute;
             top: 50%;
-            left: -130px; /* Сдвинуто левее, чтобы поместился текст */
+            left: -130px;
             transform: translateY(-50%);
             width: 110px;
             height: 50px;
-            border-radius: 12px; /* Сглаженные углы */
+            border-radius: 12px;
             background: var(--bg-card);
             border: 2px solid var(--primary);
             color: var(--primary);
@@ -114,14 +113,33 @@
             left: -280px;
         }
         .category-title { color: var(--primary); font-size: 0.9rem; margin-bottom: 15px; text-align: center; text-transform: uppercase; letter-spacing: 2px; }
-        .category-item {
-            display: flex; align-items: center; gap: 10px; padding: 8px; margin-bottom: 5px;
-            background: var(--bg-panel); border-radius: 6px; cursor: pointer; transition: all 0.2s;
-            color: var(--text-dim); font-size: 0.85rem;
+        
+        /* Стили для кнопок плейлистов */
+        .playlist-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-dim);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .category-item:hover { background: var(--border); color: var(--text); }
-        .category-item.active { background: rgba(var(--primary-rgb), 0.2); color: var(--primary); border: 1px solid var(--primary); }
-        .category-item input { display: none; }
+        .playlist-btn:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+        .playlist-btn.active {
+            background: rgba(var(--primary-rgb), 0.2);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
 
         .hack-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000;
@@ -185,14 +203,7 @@
         .search-input:focus { border-color: var(--primary); }
         .search-input::placeholder { color: var(--text-dim); }
 
-        .tabs { display: flex; gap: 0; margin-bottom: 15px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-        .tab-btn {
-            flex: 1; padding: 10px 5px; background: var(--bg-panel); color: var(--text-dim); border: none;
-            cursor: pointer; font-size: 0.75rem; font-family: 'Courier New', Courier, monospace;
-            text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;
-        }
-        .tab-btn:hover { background: var(--border); color: var(--text); }
-        .tab-btn.active { background: rgba(var(--primary-rgb), 0.15); color: var(--primary); border-bottom: 2px solid var(--primary); }
+        /* УБРАНЫ ВКЛАДКИ С ПЛЕЕРА */
 
         .track-list {
             background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px;
@@ -348,12 +359,15 @@
     <div id="video-bg"></div>
     
     <div class="player-card" id="playerCard">
-        <!-- ИСПРАВЛЕНО: Квадратная кнопка со скругленными углами и текстом -->
         <button class="category-toggle-btn" id="categoryToggleBtn">Категории</button>
         <div class="category-panel" id="categoryPanel">
-            <!-- ИСПРАВЛЕНО: Надпись изменена на Плейлисты -->
             <div class="category-title">Плейлисты</div>
-            <div id="categoryList"></div>
+            <!-- ДОБАВЛЕНЫ КНОПКИ ПЛЕЙЛИСТОВ -->
+            <button class="playlist-btn active" data-playlist="all">Все треки</button>
+            <button class="playlist-btn" data-playlist="chill">Chill</button>
+            <button class="playlist-btn" data-playlist="nostalgia">Ностальгия</button>
+            <button class="playlist-btn" data-playlist="favorites">Избранное</button>
+            <button class="playlist-btn" data-playlist="disliked">Дизлайк</button>
         </div>
 
         <div class="title" id="titleText" data-text="WELCOME NAHUI">WELCOME NAHUI</div>
@@ -368,19 +382,13 @@
 
         <input type="text" class="search-input" id="searchInput" placeholder="Поиск треков...">
         
-        <!-- ИСПРАВЛЕНО: Добавлены вкладки Избранное и Дизлайк -->
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="chill">Chill</button>
-            <button class="tab-btn" data-tab="nostalgia">Ностальгия</button>
-            <button class="tab-btn" data-tab="favorites">Избранное</button>
-            <button class="tab-btn" data-tab="disliked">Дизлайк</button>
-        </div>
+        <!-- ВКЛАДКИ УБРАНЫ -->
         
         <div class="track-list" id="trackList"></div>
         
         <div class="nav-buttons">
             <button class="nav-btn" id="prevBtn" title="Предыдущий (←)">◄</button>
-            <button class="nav-btn" id="rouletteBtn" title="Рулетка (R)">🎰</button>
+            <button class="nav-btn" id="rouletteBtn" title="Рулетка (R)"></button>
             <button class="nav-btn" id="loopBtn" title="Режим повтора (L)">🔁</button>
             <button class="nav-btn" id="nextBtn" title="Следующий (→)">►</button>
         </div>
@@ -456,17 +464,7 @@
             ]
         };
 
-        // Объединяем все треки для поиска в Избранном/Дизлайке
         const allTracks = [...playlists.chill, ...playlists.nostalgia, ...playlists.secret];
-
-        // ИСПРАВЛЕНО: Плейлисты вместо фильтров жанров
-        const allCategories = [
-            { id: "all", name: "Все треки" },
-            { id: "chill", name: "Chill" },
-            { id: "nostalgia", name: "Ностальгия" },
-            { id: "favorites", name: "Избранное" },
-            { id: "disliked", name: "Дизлайк" }
-        ];
 
         const quotes = [
             "Не учаться ничему некоторые",
@@ -480,15 +478,14 @@
             theme: localStorage.getItem('wn_theme') || 'default',
             volume: parseFloat(localStorage.getItem('wn_volume')) || 0.8,
             loopMode: localStorage.getItem('wn_loopMode') || 'all',
-            currentTab: localStorage.getItem('wn_currentTab') || 'chill',
+            currentPlaylist: localStorage.getItem('wn_playlist') || 'all',
             currentTrackIndex: parseInt(localStorage.getItem('wn_currentTrackIndex')) || 0,
-            selectedCategories: JSON.parse(localStorage.getItem('wn_categories')) || ['all'],
             likedTracks: JSON.parse(localStorage.getItem('wn_liked')) || [],
             dislikedTracks: JSON.parse(localStorage.getItem('wn_disliked')) || []
         };
 
         let currentThemeIndex = themes.indexOf(savedState.theme);
-        let currentTab = savedState.currentTab;
+        let currentPlaylist = savedState.currentPlaylist;
         let currentTrackIndex = savedState.currentTrackIndex;
         let volume = savedState.volume;
         let loopMode = savedState.loopMode;
@@ -496,7 +493,6 @@
         let secretUnlocked = false;
         let titleClickCount = 0;
         let searchQuery = '';
-        let activeCategories = savedState.selectedCategories;
         const konamiCode = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
         let konamiIndex = 0;
 
@@ -504,37 +500,29 @@
             localStorage.setItem('wn_theme', themes[currentThemeIndex]);
             localStorage.setItem('wn_volume', volume);
             localStorage.setItem('wn_loopMode', loopMode);
-            localStorage.setItem('wn_currentTab', currentTab);
+            localStorage.setItem('wn_playlist', currentPlaylist);
             localStorage.setItem('wn_currentTrackIndex', currentTrackIndex);
-            localStorage.setItem('wn_categories', JSON.stringify(activeCategories));
             localStorage.setItem('wn_liked', JSON.stringify(savedState.likedTracks));
             localStorage.setItem('wn_disliked', JSON.stringify(savedState.dislikedTracks));
         }
 
-        // ИСПРАВЛЕНО: Динамическая фильтрация треков по выбранной вкладке/категории
         function getCurrentTracks() {
             let tracks = [];
             
-            if (currentTab === 'chill') {
-                tracks = [...playlists.chill];
-            } else if (currentTab === 'nostalgia') {
-                tracks = [...playlists.nostalgia];
-                if (secretUnlocked) tracks = tracks.concat(playlists.secret);
-            } else if (currentTab === 'favorites') {
-                tracks = allTracks.filter(t => savedState.likedTracks.includes(`${t.artist} - ${t.name}`));
-            } else if (currentTab === 'disliked') {
-                tracks = allTracks.filter(t => savedState.dislikedTracks.includes(`${t.artist} - ${t.name}`));
-            } else {
+            if (currentPlaylist === 'all') {
                 tracks = [...playlists.chill, ...playlists.nostalgia];
                 if (secretUnlocked) tracks = tracks.concat(playlists.secret);
+            } else if (currentPlaylist === 'chill') {
+                tracks = [...playlists.chill];
+            } else if (currentPlaylist === 'nostalgia') {
+                tracks = [...playlists.nostalgia];
+                if (secretUnlocked) tracks = tracks.concat(playlists.secret);
+            } else if (currentPlaylist === 'favorites') {
+                tracks = allTracks.filter(t => savedState.likedTracks.includes(`${t.artist} - ${t.name}`));
+            } else if (currentPlaylist === 'disliked') {
+                tracks = allTracks.filter(t => savedState.dislikedTracks.includes(`${t.artist} - ${t.name}`));
             }
 
-            // Дополнительная фильтрация по боковой панели (если выбрано не "Все")
-            if (!activeCategories.includes('all')) {
-                tracks = tracks.filter(t => t.categories && t.categories.some(c => activeCategories.includes(c)));
-            }
-
-            // Поиск
             if (searchQuery) {
                 tracks = tracks.filter(t => t.name.toLowerCase().includes(searchQuery) || t.artist.toLowerCase().includes(searchQuery));
             }
@@ -560,7 +548,6 @@
         const volumeValue = document.getElementById('volumeValue');
         const volumeIcon = document.getElementById('volumeIcon');
         const videoBg = document.getElementById('video-bg');
-        const tabBtns = document.querySelectorAll('.tab-btn');
         const playerCard = document.getElementById('playerCard');
         const titleText = document.getElementById('titleText');
         const searchInput = document.getElementById('searchInput');
@@ -580,7 +567,7 @@
         const dislikeBtn = document.getElementById('dislikeBtn');
         const categoryToggleBtn = document.getElementById('categoryToggleBtn');
         const categoryPanel = document.getElementById('categoryPanel');
-        const categoryList = document.getElementById('categoryList');
+        const playlistBtns = document.querySelectorAll('.playlist-btn');
         const secretSound = document.getElementById('secretSound');
 
         const hackLines = [
@@ -800,8 +787,8 @@
         function renderTrackList() {
             trackList.innerHTML = '';
             const tracks = getCurrentTracks();
-            if (tracks.length === 0 && (currentTab === 'favorites' || currentTab === 'disliked')) {
-                trackList.innerHTML = `<div style="padding:15px; color:var(--text-dim); text-align:center; font-size:0.8rem;">${currentTab === 'favorites' ? 'Пока ничего не добавлено в избранное' : 'Список дизлайков пуст'}</div>`;
+            if (tracks.length === 0 && (currentPlaylist === 'favorites' || currentPlaylist === 'disliked')) {
+                trackList.innerHTML = `<div style="padding:15px; color:var(--text-dim); text-align:center; font-size:0.8rem;">${currentPlaylist === 'favorites' ? 'Пока ничего не добавлено в избранное' : 'Список дизлайков пуст'}</div>`;
                 return;
             }
             tracks.forEach((track, index) => {
@@ -878,7 +865,6 @@
             dislikeBtn.classList.toggle('disliked', savedState.dislikedTracks.includes(trackId));
         }
         
-        // ИСПРАВЛЕНО: Мгновенное обновление списка при изменении лайка/дизлайка
         function toggleLike() {
             const tracks = getCurrentTracks();
             if (tracks.length === 0) return;
@@ -892,8 +878,7 @@
             }
             updateLikeDislikeUI(track);
             saveState();
-            if (currentTab === 'favorites' || currentTab === 'disliked') {
-                // Пересчитываем индекс, так как массив изменился
+            if (currentPlaylist === 'favorites' || currentPlaylist === 'disliked') {
                 const newTracks = getCurrentTracks();
                 currentTrackIndex = Math.min(currentTrackIndex, newTracks.length - 1);
                 renderTrackList();
@@ -915,7 +900,7 @@
             }
             updateLikeDislikeUI(track);
             saveState();
-            if (currentTab === 'favorites' || currentTab === 'disliked') {
+            if (currentPlaylist === 'favorites' || currentPlaylist === 'disliked') {
                 const newTracks = getCurrentTracks();
                 currentTrackIndex = Math.min(currentTrackIndex, newTracks.length - 1);
                 renderTrackList();
@@ -926,33 +911,30 @@
         }
         likeBtn.addEventListener('click', toggleLike);
         dislikeBtn.addEventListener('click', toggleDislike);
-        function renderCategories() {
-            categoryList.innerHTML = '';
-            allCategories.forEach(cat => {
-                const div = document.createElement('div');
-                div.className = 'category-item' + (activeCategories.includes(cat.id) ? ' active' : '');
-                div.innerHTML = `<span>${cat.name}</span>`;
-                div.addEventListener('click', () => {
-                    if (cat.id === 'all') {
-                        activeCategories = ['all'];
-                    } else {
-                        activeCategories = activeCategories.filter(c => c !== 'all');
-                        if (activeCategories.includes(cat.id)) {
-                            activeCategories = activeCategories.filter(c => c !== cat.id);
-                            if (activeCategories.length === 0) activeCategories = ['all'];
-                        } else {
-                            activeCategories.push(cat.id);
-                        }
-                    }
-                    renderCategories();
-                    saveState();
-                });
-                categoryList.appendChild(div);
+        
+        // ОБРАБОТКА КНОПОК ПЛЕЙЛИСТОВ
+        playlistBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const playlist = btn.dataset.playlist;
+                if (playlist === currentPlaylist) return;
+                
+                playlistBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                currentPlaylist = playlist;
+                currentTrackIndex = 0;
+                searchQuery = '';
+                searchInput.value = '';
+                renderTrackList();
+                loadTrack(0, false);
+                saveState();
             });
-        }
+        });
+
         categoryToggleBtn.addEventListener('click', () => {
             categoryPanel.classList.toggle('visible');
         });
+        
         function addToHistory(track) {
             if (history.length > 0 && history[0].src === track.src) return;
             history.unshift({ name: track.name, artist: track.artist, src: track.src });
@@ -975,11 +957,8 @@
                     if (idx !== -1) {
                         loadTrack(idx, true);
                     } else {
-                        // Если трека нет в текущем фильтре, ищем во всех
                         const globalIdx = allTracks.findIndex(t => t.src === track.src);
                         if(globalIdx !== -1) {
-                             // Временно переключаем вкладку, чтобы найти трек
-                             // Для простоты просто загрузим его напрямую
                              audio.src = track.src;
                              typeWriter(`${track.artist} — ${track.name}`, trackSubtitle, 40);
                              audio.play().catch(e => console.warn('Play error:', e));
@@ -1010,23 +989,6 @@
             searchQuery = e.target.value.toLowerCase();
             currentTrackIndex = 0;
             renderTrackList();
-        });
-        
-        // ИСПРАВЛЕНО: Обработка переключения вкладок (включая Избранное и Дизлайк)
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tab = btn.dataset.tab;
-                if (tab === currentTab) return;
-                tabBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentTab = tab;
-                currentTrackIndex = 0;
-                searchQuery = '';
-                searchInput.value = '';
-                renderTrackList();
-                loadTrack(0, false);
-                saveState();
-            });
         });
 
         document.addEventListener('keydown', (e) => {
@@ -1133,11 +1095,15 @@
             }
             audio.volume = volume;
             updateVolumeUI();
-            renderCategories();
-            renderHistory();
-            tabBtns.forEach(b => {
-                b.classList.toggle('active', b.dataset.tab === currentTab);
+            
+            // Устанавливаем активную кнопку плейлиста
+            playlistBtns.forEach(btn => {
+                if (btn.dataset.playlist === currentPlaylist) {
+                    btn.classList.add('active');
+                }
             });
+            
+            renderHistory();
             renderTrackList();
             loadTrack(currentTrackIndex, false);
             quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
