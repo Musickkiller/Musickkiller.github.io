@@ -150,7 +150,7 @@
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.2); /* Немного уменьшил затемнение, чтобы видео было ярче */
             pointer-events: none;
         }
 
@@ -193,6 +193,7 @@
             51%, 100% { opacity: 0; }
         }
 
+        /* ИСПРАВЛЕНИЕ: Добавлен плавный переход для фона и размытия */
         .player-card {
             background: linear-gradient(145deg, var(--bg-card), rgba(27, 30, 38, 0.92));
             border: 2px solid var(--primary);
@@ -204,8 +205,15 @@
             position: relative;
             z-index: 2;
             backdrop-filter: blur(6px);
-            transition: box-shadow 0.1s;
+            transition: background 1s ease, backdrop-filter 1s ease, box-shadow 0.1s, border-color 1s ease;
             overflow: visible;
+        }
+
+        /* ИСПРАВЛЕНИЕ: Класс для прозрачного фона при видео */
+        .player-card.video-active {
+            background: rgba(13, 14, 18, 0.25) !important;
+            backdrop-filter: blur(2px);
+            border-color: rgba(var(--primary-rgb), 0.4);
         }
 
         .title {
@@ -543,9 +551,9 @@
         .roulette-wrapper-outer {
             position: absolute;
             top: 50%;
-            left: calc(100% + 20px); /* Справа от плеера */
+            left: calc(100% + 20px);
             transform: translateY(-50%) translateX(40px);
-            width: 240px; /* Уже, как просили */
+            width: 240px;
             z-index: 100;
             pointer-events: none;
             opacity: 0;
@@ -564,7 +572,7 @@
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.5);
-            backdrop-filter: blur(6px); /* Стиль как у плеера */
+            backdrop-filter: blur(6px);
         }
         
         .roulette-title {
@@ -585,10 +593,9 @@
             border: 1px solid var(--border);
             background: var(--bg-panel);
             width: 100%;
-            height: 240px; /* Показывает ровно 3 трека (3 * 80px) */
+            height: 240px;
         }
         
-        /* Указатель СПРАВА */
         .roulette-pointer {
             position: absolute;
             top: 50%;
@@ -598,12 +605,11 @@
             height: 0;
             border-top: 12px solid transparent;
             border-bottom: 12px solid transparent;
-            border-right: 16px solid var(--primary); /* Смотрит влево */
+            border-right: 16px solid var(--primary);
             z-index: 10;
             filter: drop-shadow(0 0 10px rgba(var(--primary-rgb), 0.8));
         }
         
-        /* Линия указателя */
         .roulette-pointer::after {
             content: '';
             position: absolute;
@@ -618,13 +624,13 @@
         
         .roulette-track-list {
             display: flex;
-            flex-direction: column; /* ВЕРТИКАЛЬНАЯ ПРОКРУТКА */
+            flex-direction: column;
             gap: 0;
             will-change: transform;
         }
         
         .roulette-track-item {
-            flex: 0 0 80px; /* ФИКСИРОВАННАЯ ВЫСОТА 80px для точной математики */
+            flex: 0 0 80px;
             width: 100%;
             padding: 10px;
             text-align: center;
@@ -782,7 +788,6 @@
                 { name: "Don't tell your dreams", artist: "LOVIXX, STOSLIV", src: "https://cdn5.deliciousoranges.com/s1/get/music/20260621/LOVIXX_-_Dont_tell_your_dreams_81746473.mp3" },
                 { name: "Hilfe", artist: "Lostboi Lino", src: "https://s1.deliciouspeaches.com/get/music/20250821/Lostboi_Lino_-_Hilfe_79520224.mp3" },
                 { name: "Hurricane", artist: "BUNT. feat. HON, SMBDY", src: "https://s3.deliciouspeaches.com/get/music/20220126/BUNT_feat_HON_SMBDY_-_Hurricane_73712791.mp3" },
-                // ИСПРАВЛЕНИЕ: Ссылка на RAW файл GitHub, а не на страницу /blob/
                 { name: "Make It Bun Dem", artist: "Skrillex", src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3", videoSrc: "https://raw.githubusercontent.com/Musickkiller/Musickkiller.github.io/main/FAR%20CRY%203%20_%20MAKE%20IT%20BUN%20DEM%20_%20EDIT.mp4" }
             ],
             nostalgia: [
@@ -1112,9 +1117,12 @@
                 video.play().then(() => {
                     console.log('▶️ Видео запущено');
                     videoBg.classList.add('visible');
+                    // ИСПРАВЛЕНИЕ: Делаем фон плеера прозрачным
+                    playerCard.classList.add('video-active');
                 }).catch(err => {
                     console.warn('⚠️ Ошибка автозапуска:', err);
                     videoBg.classList.add('visible');
+                    playerCard.classList.add('video-active');
                 });
                 
                 video.removeEventListener('canplay', onCanPlay);
@@ -1130,7 +1138,7 @@
                     console.log('🔄 Повторная попытка загрузки через 2 секунды...');
                     setTimeout(() => showVideo(videoSrc), 2000);
                 } else {
-                    console.warn('⚠️ Видео не удалось загрузить после', MAX_VIDEO_ATTEMPTS, 'попыток. Убедитесь, что это прямая ссылка на RAW файл.');
+                    console.warn('⚠️ Видео не удалось загрузить после', MAX_VIDEO_ATTEMPTS, 'попыток.');
                     hideVideo();
                 }
                 
@@ -1153,6 +1161,9 @@
 
         function hideVideo() {
             videoBg.classList.remove('visible');
+            // ИСПРАВЛЕНИЕ: Возвращаем нормальный фон плеера
+            playerCard.classList.remove('video-active');
+            
             setTimeout(() => {
                 const video = videoBg.querySelector('video');
                 if (video) {
@@ -1324,7 +1335,6 @@
             else volumeIcon.textContent = '🔊';
         }
 
-        // ========== ВЕРТИКАЛЬНАЯ РУЛЕТКА С ТОЧНОЙ МАТЕМАТИКОЙ ==========
         let isRouletting = false;
         
         function startRoulette() {
@@ -1338,7 +1348,7 @@
             }
             
             rouletteTrackList.innerHTML = '';
-            const repeats = 20; // Крутим дольше для эффекта
+            const repeats = 20;
             
             for (let r = 0; r < repeats; r++) {
                 tracks.forEach((track, index) => {
@@ -1360,16 +1370,14 @@
             const winnerIndex = Math.floor(Math.random() * tracks.length);
             const winnerTrack = tracks[winnerIndex];
             
-            // МАТЕМАТИКА ВЕРТИКАЛЬНОЙ РУЛЕТКИ
-            const itemHeight = 80; // Должно строго совпадать с CSS flex: 0 0 80px
-            const windowHeight = 240; // Должно строго совпадать с CSS height: 240px
-            const centerOffset = (windowHeight / 2) - (itemHeight / 2); // (240/2) - (80/2) = 80
+            const itemHeight = 80;
+            const windowHeight = 240;
+            const centerOffset = (windowHeight / 2) - (itemHeight / 2);
             
             const targetRepeat = 12 + Math.floor(Math.random() * 5);
             const targetItemIndex = (targetRepeat * tracks.length) + winnerIndex;
             const targetItemTopEdge = targetItemIndex * itemHeight;
             
-            // Мы хотим, чтобы верхний край выигрышного элемента оказался на позиции centerOffset
             const endPosition = centerOffset - targetItemTopEdge;
             
             let currentPosition = -centerOffset;
@@ -1382,7 +1390,7 @@
             function animate() {
                 const elapsed = Date.now() - startTime;
                 const progress = Math.min(elapsed / duration, 1);
-                const easeOut = 1 - Math.pow(1 - progress, 4); // Плавное замедление
+                const easeOut = 1 - Math.pow(1 - progress, 4);
                 const currentPos = startPosition + (endPosition - startPosition) * easeOut;
                 
                 rouletteTrackList.style.transform = `translateY(${currentPos}px)`;
