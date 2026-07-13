@@ -64,13 +64,14 @@
         
         .category-toggle-btn {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: var(--bg-panel);
-            border: 1px solid var(--primary);
+            top: 50%;
+            left: -70px;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 2px solid var(--primary);
             color: var(--primary);
             cursor: pointer;
             z-index: 99;
@@ -78,12 +79,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
         }
         .category-toggle-btn:hover {
             background: var(--primary);
             color: var(--bg-dark);
-            box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.5);
+            box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.5);
+            left: -75px;
         }
 
         .category-panel {
@@ -169,12 +171,7 @@
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             font-family: 'Courier New', monospace; color: var(--primary); padding: 40px; transition: opacity 0.5s;
         }
-        /* ИСПРАВЛЕНО: Добавлено display: none для полного скрытия */
-        .hack-overlay.hidden { 
-            opacity: 0; 
-            pointer-events: none; 
-            display: none;
-        }
+        .hack-overlay.hidden { opacity: 0; pointer-events: none; }
         .hack-text { font-size: 14px; line-height: 1.6; white-space: pre-wrap; max-width: 800px; text-align: left; }
         .hack-cursor { display: inline-block; width: 10px; height: 16px; background: var(--primary); animation: blink 0.7s infinite; vertical-align: middle; }
         @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
@@ -417,10 +414,11 @@
             
             .category-toggle-btn {
                 top: 10px;
-                right: 10px;
-                width: 44px;
-                height: 44px;
-                font-size: 1.3rem;
+                left: 10px;
+                right: auto;
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
             }
             
             .category-panel {
@@ -512,9 +510,20 @@
     <canvas id="visualizer"></canvas>
     <div id="video-bg"></div>
     
+    <!-- Кнопка плейлистов слева от плеера -->
+    <button class="category-toggle-btn" id="categoryToggleBtn" title="Плейлисты">☰</button>
+    
+    <div class="category-panel" id="categoryPanel">
+        <button class="category-panel-close" id="categoryPanelClose" title="Закрыть">×</button>
+        <div class="category-title">Плейлисты</div>
+        <button class="playlist-btn active" data-playlist="all">Все треки</button>
+        <button class="playlist-btn" data-playlist="chill">Chill</button>
+        <button class="playlist-btn" data-playlist="nostalgia">Ностальгия</button>
+        <button class="playlist-btn" data-playlist="favorites">Избранное</button>
+        <button class="playlist-btn" data-playlist="disliked">Дизлайк</button>
+    </div>
+
     <div class="player-card" id="playerCard">
-        <button class="category-toggle-btn" id="categoryToggleBtn" title="Плейлисты">☰</button>
-        
         <div class="title" id="titleText" data-text="WELCOME NAHUI">WELCOME NAHUI</div>
         
         <div class="subtitle-area">
@@ -529,6 +538,7 @@
         
         <div class="track-list" id="trackList"></div>
         
+        <!-- ИСПРАВЛЕНО: Добавлены белые 2D символы для всех кнопок -->
         <div class="nav-buttons">
             <button class="nav-btn" id="prevBtn" title="Предыдущий">◄</button>
             <button class="nav-btn" id="rouletteBtn" title="Рулетка">🎲</button>
@@ -1015,7 +1025,7 @@
             } else if (volume < 0.3) {
                 volumeIcon.textContent = '🔈';
             } else if (volume < 0.7) {
-                volumeIcon.textContent = '';
+                volumeIcon.textContent = '🔉';
             } else {
                 volumeIcon.textContent = '🔊';
             }
@@ -1291,6 +1301,7 @@
             quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
             drawVisualizer();
             
+            // ИСПРАВЛЕНО: Инициализация иконки повтора при загрузке
             const modes = ['all', 'one', 'shuffle'];
             const icons = ['🔁', '🔂', '🔀'];
             loopBtn.textContent = icons[modes.indexOf(loopMode)];
