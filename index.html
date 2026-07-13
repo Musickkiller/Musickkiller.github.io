@@ -176,7 +176,6 @@
         .track-item .track-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .controls { margin-bottom: 20px; }
-        /* ОБНОВЛЕННЫЙ СТИЛЬ КНОПКИ PLAY */
         .play-btn {
             background: transparent; color: var(--primary); border: 2px solid var(--primary);
             padding: 12px 40px; font-size: 1.1rem; font-weight: bold; border-radius: 8px;
@@ -231,33 +230,6 @@
         .bottom-btn:hover { border-color: var(--primary); color: var(--primary); }
 
         .quote { margin-top: 15px; font-size: 0.7rem; color: var(--text-dim); font-style: italic; min-height: 1.5em; opacity: 0.7; }
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
-            z-index: 10001; display: none; justify-content: center; align-items: center; backdrop-filter: blur(4px);
-        }
-        .modal-overlay.visible { display: flex; }
-        .modal-content {
-            background: var(--bg-card); border: 2px solid var(--primary); border-radius: 12px;
-            padding: 25px; width: 400px; max-width: 90vw; position: relative;
-        }
-        .modal-close {
-            position: absolute; top: 10px; right: 15px; background: none; border: none;
-            color: var(--text-dim); font-size: 1.5rem; cursor: pointer; transition: color 0.2s;
-        }
-        .modal-close:hover { color: var(--primary); }
-        .modal-title { color: var(--primary); font-size: 1.1rem; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
-        .modal-textarea {
-            width: 100%; height: 120px; background: var(--bg-panel); border: 1px solid var(--border);
-            border-radius: 6px; color: var(--text); padding: 10px; font-family: 'Courier New', monospace;
-            font-size: 0.85rem; resize: none; outline: none; margin-bottom: 15px;
-        }
-        .modal-textarea:focus { border-color: var(--primary); }
-        .modal-submit {
-            width: 100%; padding: 10px; background: var(--primary); color: var(--bg-dark); border: none;
-            border-radius: 6px; font-weight: bold; cursor: pointer; font-family: 'Courier New', monospace;
-            text-transform: uppercase; transition: all 0.2s;
-        }
-        .modal-submit:hover { box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.5); transform: translateY(-1px); }
 
         .history-panel {
             position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card);
@@ -366,7 +338,7 @@
         
         <div class="nav-buttons">
             <button class="nav-btn" id="prevBtn" title="Предыдущий (←)">◄</button>
-            <button class="nav-btn" id="rouletteBtn" title="Рулетка (R)">🎰</button>
+            <button class="nav-btn" id="rouletteBtn" title="Рулетка (R)"></button>
             <button class="nav-btn" id="loopBtn" title="Режим повтора (L)">🔁</button>
             <button class="nav-btn" id="nextBtn" title="Следующий (→)">►</button>
         </div>
@@ -398,7 +370,6 @@
         <div class="bottom-controls">
             <button class="bottom-btn" id="historyBtn">История</button>
             <button class="bottom-btn" id="themeBtn">Тема</button>
-            <button class="bottom-btn" id="feedbackBtn">Отзыв</button>
         </div>
 
         <div class="quote" id="quote"></div>
@@ -419,16 +390,6 @@
             </div>
         </div>
     </div>
-    <div class="modal-overlay" id="feedbackModal">
-        <div class="modal-content">
-            <button class="modal-close" id="modalClose">&times;</button>
-            <div class="modal-title">Оставить отзыв / Идею</div>
-            <textarea class="modal-textarea" id="feedbackText" placeholder="Напишите идею для музыки или отзыв о сайте..."></textarea>
-            <button class="modal-submit" id="submitFeedback">Отправить на GitHub</button>
-            <p style="font-size: 0.7rem; color: var(--text-dim); margin-top: 10px; text-align: center;">
-            </p>
-        </div>
-    </div>
 
     <script>
         const playlists = {
@@ -443,9 +404,9 @@
                 { name: "Nine Thou", artist: "Styles of Beyond", src: "https://s4.deliciouspeaches.com/get/music/20101112/Styles_of_Beyond_-_Nine_thou_19741.mp3", categories: ["nostalgia"] },
                 { name: "Ezio's Family", artist: "Jesper Kyd", src: "https://s2.deliciouspeaches.com/get/music/20181231/Jesper_Kyd_-_Ezios_Family_61237442.mp3", categories: ["nostalgia", "chill"] },
                 { name: "Loonboon", artist: "Laura Shigihara", src: "https://s3.deliciouspeaches.com/get/music/20230429/Laura_Shigihara_OST_PvZ_-_Loonboon_75886511.mp3", categories: ["nostalgia", "chill"] },
-                { name: "Minecraft", artist: "C418", src: "https://cdn20.deliciousoranges.com/s1/get/music/20260403/C418_-_Minecraft_81201046.mp3", categories: ["nostalgiat", "gaming", "chill"] },
-                { name: "Wasteland 2", artist: "MoozE", src: "https://s4.deliciouspeaches.com/get/music/20190419/MoozE_-_Wasteland_ost_Stalker_Shadow_of_Chernobyl_63616693.mp3", categories: ["nostalgia",] },
-                { name: "Metro 2033 Main Theme", artist: "Tomas Parda", src: "https://s1.deliciouspeaches.com/get/music/20250831/Tomas_Parda_-_Metro_2033_Main_Theme_79620399.mp3", categories: ["nostalgia",] },
+                { name: "Minecraft", artist: "C418", src: "https://cdn20.deliciousoranges.com/s1/get/music/20260403/C418_-_Minecraft_81201046.mp3", categories: ["nostalgia", "gaming", "chill"] },
+                { name: "Wasteland 2", artist: "MoozE", src: "https://s4.deliciouspeaches.com/get/music/20190419/MoozE_-_Wasteland_ost_Stalker_Shadow_of_Chernobyl_63616693.mp3", categories: ["nostalgia"] },
+                { name: "Metro 2033 Main Theme", artist: "Tomas Parda", src: "https://s1.deliciouspeaches.com/get/music/20250831/Tomas_Parda_-_Metro_2033_Main_Theme_79620399.mp3", categories: ["nostalgia"] },
                 { name: "Aria Math", artist: "C418", src: "https://cdn20.deliciousoranges.com/s1/get/music/20250811/C418_-_Aria_Math_79397493.mp3", categories: ["nostalgia", "chill"] }
             ],
             secret: [
@@ -456,7 +417,7 @@
         const allCategories = [
             { id: "all", name: "Все треки" },
             { id: "chill", name: "Chill" },
-            { id: "nostalgia", name: "Настольгия" }
+            { id: "nostalgia", name: "Ностальгия" }
         ];
 
         const quotes = [
@@ -554,11 +515,6 @@
         const categoryPanel = document.getElementById('categoryPanel');
         const categoryList = document.getElementById('categoryList');
         const applyCategoriesBtn = document.getElementById('applyCategoriesBtn');
-        const feedbackBtn = document.getElementById('feedbackBtn');
-        const feedbackModal = document.getElementById('feedbackModal');
-        const modalClose = document.getElementById('modalClose');
-        const feedbackText = document.getElementById('feedbackText');
-        const submitFeedback = document.getElementById('submitFeedback');
         const secretSound = document.getElementById('secretSound');
 
         const hackLines = [
@@ -780,7 +736,7 @@
                 const item = document.createElement('div');
                 item.className = 'track-item' + (index === currentTrackIndex ? ' active' : '') + (track.secret ? ' secret' : '');
                 item.innerHTML = `<span class="track-number">${String(index + 1).padStart(2, '0')}</span><span class="track-name">${track.name} — ${track.artist}</span>`;
-                item.addEventListener('click', () => loadTrack(index, true)); // При клике на трек в списке - играем
+                item.addEventListener('click', () => loadTrack(index, true));
                 trackList.appendChild(item);
             });
         }
@@ -840,7 +796,7 @@
             const percent = Math.round(volume * 100);
             volumeLevel.style.width = `${percent}%`; volumeThumb.style.left = `${percent}%`;
             volumeValue.textContent = `${percent}%`;
-            volumeIcon.textContent = volume === 0 ? '🔇' : volume < 0.5 ? '🔉' : '🔊';
+            volumeIcon.textContent = volume === 0 ? '' : volume < 0.5 ? '🔉' : '🔊';
         }
         function updateLikeDislikeUI(track) {
             const trackId = `${track.artist} - ${track.name}`;
@@ -908,26 +864,6 @@
             loadTrack(0, false);
             saveState();
         });
-        feedbackBtn.addEventListener('click', () => {
-            feedbackModal.classList.add('visible');
-        });
-        modalClose.addEventListener('click', () => {
-            feedbackModal.classList.remove('visible');
-        });
-        feedbackModal.addEventListener('click', (e) => {
-            if (e.target === feedbackModal) feedbackModal.classList.remove('visible');
-        });
-        submitFeedback.addEventListener('click', () => {
-            const text = feedbackText.value.trim();
-            if (!text) return alert('Пожалуйста, напишите отзыв или идею!');
-            const repo = 'Musickkiller/Musickkiller.github.io';
-            const title = encodeURIComponent('🎵 Отзыв / Идея: ' + text.substring(0, 30) + '...');
-            const body = encodeURIComponent(`**Отзыв или идея:**\n\n${text}\n\n---\n_Отправлено из WELCOME NAHUI Player_`);
-            const githubUrl = `https://github.com/${repo}/issues/new?title=${title}&body=${body}`;
-            window.open(githubUrl, '_blank');
-            feedbackModal.classList.remove('visible');
-            feedbackText.value = '';
-        });
         function addToHistory(track) {
             history.unshift({ name: track.name, artist: track.artist, src: track.src });
             if (history.length > 10) history.pop();
@@ -951,7 +887,7 @@
         }
         function toggleLoopMode() {
             const modes = ['all', 'one', 'shuffle'];
-            const icons = ['🔁', '🔂', '🔀'];
+            const icons = ['🔁', '🔂', ''];
             const currentIndex = modes.indexOf(loopMode);
             loopMode = modes[(currentIndex + 1) % modes.length];
             loopBtn.textContent = icons[(currentIndex + 1) % modes.length];
