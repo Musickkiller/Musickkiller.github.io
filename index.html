@@ -601,8 +601,6 @@
         let searchQuery = '';
         const konamiCode = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
         let konamiIndex = 0;
-        
-        // Переменная для эффекта листьев
         let weedLeaves = [];
         window.isWeedMode = false;
 
@@ -615,7 +613,6 @@
             localStorage.setItem('wn_liked', JSON.stringify(savedState.likedTracks));
             localStorage.setItem('wn_disliked', JSON.stringify(savedState.dislikedTracks));
         }
-
         function getCurrentTracks() {
             let tracks = [];
             if (selectedPlaylists.includes('all')) {
@@ -649,7 +646,6 @@
             }
             return uniqueTracks;
         }
-
         const audio = document.getElementById('audio');
         const playBtn = document.getElementById('playBtn');
         const progress = document.getElementById('progress');
@@ -836,15 +832,13 @@
             grad.addColorStop(1, `rgba(${primaryRGB}, 0)`);
             ctx.fillStyle = grad; ctx.fillRect(0, 0, WIDTH, HEIGHT);
         }
-
-        // Функция отрисовки стилизованного листика
         function drawWeedLeaf(ctx, x, y, size, rotation) {
             ctx.save();
             ctx.translate(x, y);
             ctx.rotate(rotation);
             ctx.beginPath();
-            ctx.moveTo(0, size * 0.5); // Низ стебля
-            ctx.lineTo(0, 0); // Центр основания листа
+            ctx.moveTo(0, size * 0.5);
+            ctx.lineTo(0, 0);
             
             const leaflets = [
                 { a: -60, l: 0.6 }, { a: -40, l: 0.8 }, { a: -20, l: 0.95 },
@@ -863,25 +857,20 @@
                 if (i < leaflets.length - 1) {
                     const nextP = leaflets[i+1];
                     const valleyRad = (p.a + nextP.a) / 2 * Math.PI / 180;
-                    const valleyLen = p.l * 0.35; // Глубина выреза между листиками
+                    const valleyLen = p.l * 0.35;
                     const vX = Math.sin(valleyRad) * size * valleyLen;
                     const vY = -Math.cos(valleyRad) * size * valleyLen;
                     perimeter.push({x: vX, y: vY});
                 }
             }
-            
-            // Рисуем контур листиков
             for (let pt of perimeter) {
                 ctx.lineTo(pt.x, pt.y);
             }
-            ctx.lineTo(0, 0); // Замыкаем на центре
-            
-            // Рисуем стебель
+            ctx.lineTo(0, 0);
             ctx.lineTo(0, size * 0.5);
             ctx.lineWidth = size * 0.15;
             ctx.strokeStyle = ctx.fillStyle;
             ctx.stroke();
-            
             ctx.fill();
             ctx.restore();
         }
@@ -894,14 +883,10 @@
             const isPlaying = !audio.paused && !audio.ended;
             const volumeFactor = isPlaying ? Math.max(0.3, volume) : 0.3;
             time += 1;
-            
             drawGlow(volumeFactor);
             for (const wave of waves) drawWave(wave, time, volumeFactor);
             drawParticles(time, volumeFactor);
-
-            // --- ЛОГИКА ПАДАЮЩИХ ЛИСТЬЕВ ---
             if (window.isWeedMode && isPlaying) {
-                // Спавн новых листьев (частота зависит от случайности)
                 if (Math.random() < 0.15) {
                     weedLeaves.push({
                         x: Math.random() * WIDTH,
@@ -915,7 +900,6 @@
                         time: 0
                     });
                 }
-
                 for (let i = weedLeaves.length - 1; i >= 0; i--) {
                     let leaf = weedLeaves[i];
                     leaf.y += leaf.fallSpeed;
@@ -923,53 +907,39 @@
                     leaf.rotation += leaf.rotSpeed;
                     let sway = Math.sin(leaf.time * leaf.swaySpeed + leaf.swayOffset) * 1.5;
                     leaf.x += sway;
-
-                    // Логика сгорания: начинается в нижней четверти экрана
                     let burnStart = HEIGHT * 0.75;
                     let burnFactor = 0;
                     if (leaf.y > burnStart) {
                         burnFactor = Math.min(1, (leaf.y - burnStart) / (HEIGHT * 0.25));
                     }
-
-                    // Если полностью сгорел - удаляем
                     if (burnFactor >= 0.95) {
                         weedLeaves.splice(i, 1);
                         continue;
                     }
-
-                    // Интерполяция цвета: Зелёный -> Жёлтый -> Оранжевый -> Пепельно-чёрный
                     let r, g, b, a;
                     if (burnFactor < 0.4) {
-                        // Зелёный в жёлтый
                         let t = burnFactor / 0.4;
                         r = Math.floor(87 + (255 - 87) * t);
                         g = Math.floor(242 + (255 - 242) * t);
                         b = Math.floor(135 + (0 - 135) * t);
                         a = 1;
                     } else if (burnFactor < 0.7) {
-                        // Жёлтый в оранжево-красный
                         let t = (burnFactor - 0.4) / 0.3;
                         r = Math.floor(255 + (255 - 255) * t);
                         g = Math.floor(255 + (80 - 255) * t);
                         b = Math.floor(0 + (0 - 0) * t);
                         a = 1 - t * 0.2;
                     } else {
-                        // Оранжевый в пепел (тёмно-серый) с затуханием
                         let t = (burnFactor - 0.7) / 0.3;
                         r = Math.floor(255 + (60 - 255) * t);
                         g = Math.floor(80 + (60 - 80) * t);
                         b = Math.floor(0 + (60 - 0) * t);
                         a = 1 - t;
                     }
-
-                    // Уменьшение размера при сгорании
                     let currentSize = leaf.size * (1 - burnFactor * 0.8);
-
                     ctx.save();
                     ctx.globalAlpha = a;
                     ctx.fillStyle = `rgb(${r},${g},${b})`;
-                    
-                    // Огненное свечение на финальной стадии
                     if (burnFactor > 0.5) {
                         ctx.shadowColor = `rgba(255, 100, 0, ${1 - burnFactor})`;
                         ctx.shadowBlur = 15 * (1 - burnFactor);
@@ -1034,13 +1004,11 @@
             }
             const track = tracks[currentTrackIndex];
             audio.src = track.src;
-            
-            // ПРОВЕРКА НА MAKE IT BUN DEM
             if (track.name === "Make It Bun Dem" && track.artist === "Skrillex") {
                 window.isWeedMode = true;
             } else {
                 window.isWeedMode = false;
-                weedLeaves = []; // Очищаем листья при смене трека
+                weedLeaves = [];
             }
 
             addToHistory(track);
@@ -1072,7 +1040,6 @@
                 trackList.appendChild(item);
             });
         }
-
         function nextTrack() {
             const tracks = getCurrentTracks();
             if (tracks.length === 0) return;
@@ -1296,7 +1263,7 @@
                 konamiIndex++;
                 if (konamiIndex === konamiCode.length) {
                     secretUnlocked = true;
-                    alert('🎉 СЕКРЕТНЫЙ ТРЕК РАЗБЛОКИРОВАН!');
+                    alert('СЕКРЕТНЫЙ ТРЕК РАЗБЛОКИРОВАН!');
                     renderTrackList();
                     konamiIndex = 0;
                 }
@@ -1380,7 +1347,6 @@
             }
             requestAnimationFrame(animate);
         }
-
         function finishRoulette(winnerTrack, winnerIndex) {
             const winnerItems = rouletteTrackList.querySelectorAll('.roulette-track-item');
             winnerItems.forEach((item, idx) => {
