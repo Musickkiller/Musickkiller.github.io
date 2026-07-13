@@ -62,37 +62,40 @@
 
         #visualizer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
         
-        /* ИСПРАВЛЕНО: Позиционирование относительно player-card */
+        /* ИСПРАВЛЕНО: Квадратная кнопка со скругленными углами и текстом */
         .category-toggle-btn {
             position: absolute;
             top: 50%;
-            left: -70px; /* Слева от карточки */
+            left: -130px; /* Сдвинуто левее, чтобы поместился текст */
             transform: translateY(-50%);
-            width: 50px;
+            width: 110px;
             height: 50px;
-            border-radius: 50%;
+            border-radius: 12px; /* Сглаженные углы */
             background: var(--bg-card);
             border: 2px solid var(--primary);
             color: var(--primary);
-            font-size: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: bold;
             cursor: pointer;
             z-index: 99;
             transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 1px;
         }
         .category-toggle-btn:hover {
             background: var(--primary);
             color: var(--bg-dark);
             box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.5);
-            left: -75px;
+            left: -135px;
         }
 
         .category-panel {
             position: absolute;
             top: 50%;
-            left: -300px; /* Спрятано далеко слева */
+            left: -300px;
             transform: translateY(-50%);
             width: 260px;
             background: var(--bg-card);
@@ -108,7 +111,7 @@
         .category-panel.visible {
             opacity: 1;
             pointer-events: auto;
-            left: -280px; /* Выезжает и встает рядом с кнопкой */
+            left: -280px;
         }
         .category-title { color: var(--primary); font-size: 0.9rem; margin-bottom: 15px; text-align: center; text-transform: uppercase; letter-spacing: 2px; }
         .category-item {
@@ -184,8 +187,8 @@
 
         .tabs { display: flex; gap: 0; margin-bottom: 15px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
         .tab-btn {
-            flex: 1; padding: 10px 15px; background: var(--bg-panel); color: var(--text-dim); border: none;
-            cursor: pointer; font-size: 0.8rem; font-family: 'Courier New', Courier, monospace;
+            flex: 1; padding: 10px 5px; background: var(--bg-panel); color: var(--text-dim); border: none;
+            cursor: pointer; font-size: 0.75rem; font-family: 'Courier New', Courier, monospace;
             text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;
         }
         .tab-btn:hover { background: var(--border); color: var(--text); }
@@ -345,12 +348,12 @@
     <div id="video-bg"></div>
     
     <div class="player-card" id="playerCard">
-        <!-- ИСПРАВЛЕНО: Кнопка и панель теперь внутри карточки для правильного позиционирования -->
-        <button class="category-toggle-btn" id="categoryToggleBtn" title="Категории">📂</button>
+        <!-- ИСПРАВЛЕНО: Квадратная кнопка со скругленными углами и текстом -->
+        <button class="category-toggle-btn" id="categoryToggleBtn">Категории</button>
         <div class="category-panel" id="categoryPanel">
-            <div class="category-title">Фильтр жанров</div>
+            <!-- ИСПРАВЛЕНО: Надпись изменена на Плейлисты -->
+            <div class="category-title">Плейлисты</div>
             <div id="categoryList"></div>
-            <button class="bottom-btn" style="width: 100%; margin-top: 15px;" id="applyCategoriesBtn">Применить микс</button>
         </div>
 
         <div class="title" id="titleText" data-text="WELCOME NAHUI">WELCOME NAHUI</div>
@@ -365,9 +368,12 @@
 
         <input type="text" class="search-input" id="searchInput" placeholder="Поиск треков...">
         
+        <!-- ИСПРАВЛЕНО: Добавлены вкладки Избранное и Дизлайк -->
         <div class="tabs">
             <button class="tab-btn active" data-tab="chill">Chill</button>
             <button class="tab-btn" data-tab="nostalgia">Ностальгия</button>
+            <button class="tab-btn" data-tab="favorites">Избранное</button>
+            <button class="tab-btn" data-tab="disliked">Дизлайк</button>
         </div>
         
         <div class="track-list" id="trackList"></div>
@@ -434,13 +440,13 @@
                 { name: "Don't tell your dreams", artist: "LOVIXX, STOSLIV", src: "https://cdn5.deliciousoranges.com/s1/get/music/20260621/LOVIXX_-_Dont_tell_your_dreams_81746473.mp3", categories: ["chill"] },
                 { name: "Hilfe", artist: "Lostboi Lino", src: "https://s1.deliciouspeaches.com/get/music/20250821/Lostboi_Lino_-_Hilfe_79520224.mp3", categories: ["chill"] },
                 { name: "Hurricane", artist: "BUNT. feat. HON, SMBDY", src: "https://s3.deliciouspeaches.com/get/music/20220126/BUNT_feat_HON_SMBDY_-_Hurricane_73712791.mp3", categories: ["chill"] },
-                { name: "Make It Bun Dem", artist: "Skrillex", src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3", videoSrc: "https://raw.githubusercontent.com/Musickkiller/Musickkiller.github.io/main/FAR%20CRY%203%20_%20MAKE%20IT%20BUN%20DEM%20_%20EDIT.mp4", categories: ["nostalgia"] }
+                { name: "Make It Bun Dem", artist: "Skrillex", src: "https://cdn2.deliciousoranges.com/s1/get/music/20170905/Skrillex_-_Make_It_Bun_Dem_48256501.mp3", videoSrc: "https://raw.githubusercontent.com/Musickkiller/Musickkiller.github.io/main/FAR%20CRY%203%20_%20MAKE%20IT%20BUN%20DEM%20_%20EDIT.mp4", categories: ["chill", "nostalgia"] }
             ],
             nostalgia: [
                 { name: "Nine Thou", artist: "Styles of Beyond", src: "https://s4.deliciouspeaches.com/get/music/20101112/Styles_of_Beyond_-_Nine_thou_19741.mp3", categories: ["nostalgia"] },
                 { name: "Ezio's Family", artist: "Jesper Kyd", src: "https://s2.deliciouspeaches.com/get/music/20181231/Jesper_Kyd_-_Ezios_Family_61237442.mp3", categories: ["nostalgia", "chill"] },
                 { name: "Loonboon", artist: "Laura Shigihara", src: "https://s3.deliciouspeaches.com/get/music/20230429/Laura_Shigihara_OST_PvZ_-_Loonboon_75886511.mp3", categories: ["nostalgia", "chill"] },
-                { name: "Minecraft", artist: "C418", src: "https://cdn20.deliciousoranges.com/s1/get/music/20260403/C418_-_Minecraft_81201046.mp3", categories: ["nostalgia", "gaming", "chill"] },
+                { name: "Minecraft", artist: "C418", src: "https://cdn20.deliciousoranges.com/s1/get/music/20260403/C418_-_Minecraft_81201046.mp3", categories: ["nostalgia", "chill"] },
                 { name: "Wasteland 2", artist: "MoozE", src: "https://s4.deliciouspeaches.com/get/music/20190419/MoozE_-_Wasteland_ost_Stalker_Shadow_of_Chernobyl_63616693.mp3", categories: ["nostalgia"] },
                 { name: "Metro 2033 Main Theme", artist: "Tomas Parda", src: "https://s1.deliciouspeaches.com/get/music/20250831/Tomas_Parda_-_Metro_2033_Main_Theme_79620399.mp3", categories: ["nostalgia"] },
                 { name: "Aria Math", artist: "C418", src: "https://cdn20.deliciousoranges.com/s1/get/music/20250811/C418_-_Aria_Math_79397493.mp3", categories: ["nostalgia", "chill"] }
@@ -450,10 +456,16 @@
             ]
         };
 
+        // Объединяем все треки для поиска в Избранном/Дизлайке
+        const allTracks = [...playlists.chill, ...playlists.nostalgia, ...playlists.secret];
+
+        // ИСПРАВЛЕНО: Плейлисты вместо фильтров жанров
         const allCategories = [
             { id: "all", name: "Все треки" },
             { id: "chill", name: "Chill" },
-            { id: "nostalgia", name: "Ностальгия" }
+            { id: "nostalgia", name: "Ностальгия" },
+            { id: "favorites", name: "Избранное" },
+            { id: "disliked", name: "Дизлайк" }
         ];
 
         const quotes = [
@@ -499,15 +511,34 @@
             localStorage.setItem('wn_disliked', JSON.stringify(savedState.dislikedTracks));
         }
 
+        // ИСПРАВЛЕНО: Динамическая фильтрация треков по выбранной вкладке/категории
         function getCurrentTracks() {
-            let tracks = [...playlists[currentTab]];
-            if (secretUnlocked) tracks = tracks.concat(playlists.secret);
+            let tracks = [];
+            
+            if (currentTab === 'chill') {
+                tracks = [...playlists.chill];
+            } else if (currentTab === 'nostalgia') {
+                tracks = [...playlists.nostalgia];
+                if (secretUnlocked) tracks = tracks.concat(playlists.secret);
+            } else if (currentTab === 'favorites') {
+                tracks = allTracks.filter(t => savedState.likedTracks.includes(`${t.artist} - ${t.name}`));
+            } else if (currentTab === 'disliked') {
+                tracks = allTracks.filter(t => savedState.dislikedTracks.includes(`${t.artist} - ${t.name}`));
+            } else {
+                tracks = [...playlists.chill, ...playlists.nostalgia];
+                if (secretUnlocked) tracks = tracks.concat(playlists.secret);
+            }
+
+            // Дополнительная фильтрация по боковой панели (если выбрано не "Все")
             if (!activeCategories.includes('all')) {
                 tracks = tracks.filter(t => t.categories && t.categories.some(c => activeCategories.includes(c)));
             }
+
+            // Поиск
             if (searchQuery) {
                 tracks = tracks.filter(t => t.name.toLowerCase().includes(searchQuery) || t.artist.toLowerCase().includes(searchQuery));
             }
+            
             return tracks;
         }
 
@@ -550,7 +581,6 @@
         const categoryToggleBtn = document.getElementById('categoryToggleBtn');
         const categoryPanel = document.getElementById('categoryPanel');
         const categoryList = document.getElementById('categoryList');
-        const applyCategoriesBtn = document.getElementById('applyCategoriesBtn');
         const secretSound = document.getElementById('secretSound');
 
         const hackLines = [
@@ -616,6 +646,7 @@
             }
             setTimeout(() => titleClickCount = 0, 2000);
         });
+
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
         function resizeCanvas() {
@@ -753,10 +784,7 @@
             }
             const track = tracks[currentTrackIndex];
             audio.src = track.src;
-            
-            // ИСПРАВЛЕНО: Добавлен вызов функции добавления в историю
             addToHistory(track);
-            
             typeWriter(`${track.artist} — ${track.name}`, trackSubtitle, 40);
             updateLikeDislikeUI(track);
             renderTrackList();
@@ -772,6 +800,10 @@
         function renderTrackList() {
             trackList.innerHTML = '';
             const tracks = getCurrentTracks();
+            if (tracks.length === 0 && (currentTab === 'favorites' || currentTab === 'disliked')) {
+                trackList.innerHTML = `<div style="padding:15px; color:var(--text-dim); text-align:center; font-size:0.8rem;">${currentTab === 'favorites' ? 'Пока ничего не добавлено в избранное' : 'Список дизлайков пуст'}</div>`;
+                return;
+            }
             tracks.forEach((track, index) => {
                 const item = document.createElement('div');
                 item.className = 'track-item' + (index === currentTrackIndex ? ' active' : '') + (track.secret ? ' secret' : '');
@@ -782,6 +814,7 @@
         }
         function nextTrack() {
             const tracks = getCurrentTracks();
+            if (tracks.length === 0) return;
             if (loopMode === 'one') { audio.currentTime = 0; audio.play(); return; }
             if (loopMode === 'shuffle') currentTrackIndex = Math.floor(Math.random() * tracks.length);
             else currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
@@ -789,6 +822,7 @@
         }
         function prevTrack() {
             const tracks = getCurrentTracks();
+            if (tracks.length === 0) return;
             currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
             loadTrack(currentTrackIndex, true);
         }
@@ -843,8 +877,11 @@
             likeBtn.classList.toggle('liked', savedState.likedTracks.includes(trackId));
             dislikeBtn.classList.toggle('disliked', savedState.dislikedTracks.includes(trackId));
         }
+        
+        // ИСПРАВЛЕНО: Мгновенное обновление списка при изменении лайка/дизлайка
         function toggleLike() {
             const tracks = getCurrentTracks();
+            if (tracks.length === 0) return;
             const track = tracks[currentTrackIndex];
             const trackId = `${track.artist} - ${track.name}`;
             if (savedState.likedTracks.includes(trackId)) {
@@ -855,9 +892,19 @@
             }
             updateLikeDislikeUI(track);
             saveState();
+            if (currentTab === 'favorites' || currentTab === 'disliked') {
+                // Пересчитываем индекс, так как массив изменился
+                const newTracks = getCurrentTracks();
+                currentTrackIndex = Math.min(currentTrackIndex, newTracks.length - 1);
+                renderTrackList();
+                if(newTracks.length > 0 && currentTrackIndex >= 0) {
+                     updateLikeDislikeUI(newTracks[currentTrackIndex]);
+                }
+            }
         }
         function toggleDislike() {
             const tracks = getCurrentTracks();
+            if (tracks.length === 0) return;
             const track = tracks[currentTrackIndex];
             const trackId = `${track.artist} - ${track.name}`;
             if (savedState.dislikedTracks.includes(trackId)) {
@@ -868,6 +915,14 @@
             }
             updateLikeDislikeUI(track);
             saveState();
+            if (currentTab === 'favorites' || currentTab === 'disliked') {
+                const newTracks = getCurrentTracks();
+                currentTrackIndex = Math.min(currentTrackIndex, newTracks.length - 1);
+                renderTrackList();
+                if(newTracks.length > 0 && currentTrackIndex >= 0) {
+                     updateLikeDislikeUI(newTracks[currentTrackIndex]);
+                }
+            }
         }
         likeBtn.addEventListener('click', toggleLike);
         dislikeBtn.addEventListener('click', toggleDislike);
@@ -890,19 +945,13 @@
                         }
                     }
                     renderCategories();
+                    saveState();
                 });
                 categoryList.appendChild(div);
             });
         }
         categoryToggleBtn.addEventListener('click', () => {
             categoryPanel.classList.toggle('visible');
-        });
-        applyCategoriesBtn.addEventListener('click', () => {
-            categoryPanel.classList.remove('visible');
-            currentTrackIndex = 0;
-            renderTrackList();
-            loadTrack(0, false);
-            saveState();
         });
         function addToHistory(track) {
             if (history.length > 0 && history[0].src === track.src) return;
@@ -925,6 +974,17 @@
                     const idx = tracks.findIndex(t => t.src === track.src);
                     if (idx !== -1) {
                         loadTrack(idx, true);
+                    } else {
+                        // Если трека нет в текущем фильтре, ищем во всех
+                        const globalIdx = allTracks.findIndex(t => t.src === track.src);
+                        if(globalIdx !== -1) {
+                             // Временно переключаем вкладку, чтобы найти трек
+                             // Для простоты просто загрузим его напрямую
+                             audio.src = track.src;
+                             typeWriter(`${track.artist} — ${track.name}`, trackSubtitle, 40);
+                             audio.play().catch(e => console.warn('Play error:', e));
+                             updatePlayButtonState(true);
+                        }
                     }
                 });
                 historyListEl.appendChild(item);
@@ -951,6 +1011,8 @@
             currentTrackIndex = 0;
             renderTrackList();
         });
+        
+        // ИСПРАВЛЕНО: Обработка переключения вкладок (включая Избранное и Дизлайк)
         tabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const tab = btn.dataset.tab;
@@ -963,8 +1025,10 @@
                 searchInput.value = '';
                 renderTrackList();
                 loadTrack(0, false);
+                saveState();
             });
         });
+
         document.addEventListener('keydown', (e) => {
             if (e.code === konamiCode[konamiIndex]) {
                 konamiIndex++;
