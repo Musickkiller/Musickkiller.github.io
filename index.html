@@ -61,6 +61,7 @@
         }
 
         #visualizer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        
         .category-panel {
             position: absolute; top: 50%; right: calc(100% + 20px); transform: translateY(-50%) translateX(-20px);
             width: 260px; background: var(--bg-card); border: 2px solid var(--primary); border-radius: 12px;
@@ -78,8 +79,9 @@
         .category-item.active { background: rgba(var(--primary-rgb), 0.2); color: var(--primary); border: 1px solid var(--primary); }
         .category-item input { display: none; }
 
+        /* ИСПРАВЛЕНО: Кнопка категорий теперь видна (было +300px, стало +20px) */
         .category-toggle-btn {
-            position: absolute; top: 50%; right: calc(100% + 300px); transform: translateY(-50%);
+            position: absolute; top: 50%; right: calc(100% + 20px); transform: translateY(-50%);
             width: 50px; height: 50px; border-radius: 50%; background: var(--bg-card);
             border: 2px solid var(--primary); color: var(--primary); font-size: 1.5rem;
             cursor: pointer; z-index: 99; transition: all 0.3s; display: flex; align-items: center; justify-content: center;
@@ -309,7 +311,10 @@
 
     <canvas id="visualizer"></canvas>
     <div id="video-bg"></div>
-    <button class="category-toggle-btn" id="categoryToggleBtn" title="Категории">Категории</button>
+    
+    <!-- ИСПРАВЛЕНО: Кнопка теперь имеет нормальный отступ и видна -->
+    <button class="category-toggle-btn" id="categoryToggleBtn" title="Категории">📂</button>
+    
     <div class="category-panel" id="categoryPanel">
         <div class="category-title">Фильтр жанров</div>
         <div id="categoryList"></div>
@@ -338,7 +343,8 @@
         
         <div class="nav-buttons">
             <button class="nav-btn" id="prevBtn" title="Предыдущий (←)">◄</button>
-            <button class="nav-btn" id="rouletteBtn" title="Рулетка (R)"></button>
+            <!-- ИСПРАВЛЕНО: Вернута иконка рулетки -->
+            <button class="nav-btn" id="rouletteBtn" title="Рулетка (R)">🎰</button>
             <button class="nav-btn" id="loopBtn" title="Режим повтора (L)">🔁</button>
             <button class="nav-btn" id="nextBtn" title="Следующий (→)">►</button>
         </div>
@@ -673,7 +679,8 @@
             const video = document.createElement('video');
             video.src = videoSrc; video.autoplay = true; video.loop = false; video.muted = true;
             video.playsInline = true; video.setAttribute('playsinline', ''); video.setAttribute('webkit-playsinline', '');
-            video.setAttribute('muted', ''); video.crossOrigin = "anonymous";
+            video.setAttribute('muted', '');
+            // ИСПРАВЛЕНО: Убран crossOrigin, который блокировал видео с GitHub Raw
             let videoLoaded = false;
             const onCanPlay = () => {
                 if (videoLoaded) return; videoLoaded = true; videoLoadAttempts = 0;
@@ -865,12 +872,18 @@
             saveState();
         });
         function addToHistory(track) {
+            // Предотвращаем дубликаты подряд
+            if (history.length > 0 && history[0].src === track.src) return;
             history.unshift({ name: track.name, artist: track.artist, src: track.src });
             if (history.length > 10) history.pop();
             renderHistory();
         }
         function renderHistory() {
             historyListEl.innerHTML = '';
+            if (history.length === 0) {
+                historyListEl.innerHTML = '<div style="padding:10px; color:var(--text-dim); text-align:center;">История пуста</div>';
+                return;
+            }
             history.forEach((track, index) => {
                 const item = document.createElement('div');
                 item.className = 'history-item';
@@ -887,7 +900,7 @@
         }
         function toggleLoopMode() {
             const modes = ['all', 'one', 'shuffle'];
-            const icons = ['🔁', '🔂', ''];
+            const icons = ['🔁', '🔂', '🔀'];
             const currentIndex = modes.indexOf(loopMode);
             loopMode = modes[(currentIndex + 1) % modes.length];
             loopBtn.textContent = icons[(currentIndex + 1) % modes.length];
@@ -1025,6 +1038,7 @@
             audio.volume = volume;
             updateVolumeUI();
             renderCategories();
+            renderHistory(); // Инициализируем историю при загрузке
             tabBtns.forEach(b => {
                 b.classList.toggle('active', b.dataset.tab === currentTab);
             });
