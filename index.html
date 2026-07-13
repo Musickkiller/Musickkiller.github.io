@@ -843,7 +843,7 @@
             for (let i = 0; i < leafletCount; i++) {
                 const angle = angles[i] * Math.PI / 180;
                 const length = size * lengths[i];
-                const width = size * 0.06;   
+                const width = size * 0.06;
                 ctx.save();
                 ctx.rotate(angle);
                 ctx.beginPath();
@@ -875,9 +875,13 @@
                 ctx.restore();
             }
             ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.quadraticCurveTo(-size * 0.03, size * 0.25, -size * 0.08, size * 0.5);
-            ctx.quadraticCurveTo(size * 0.03, size * 0.25, 0, 0);
+            ctx.moveTo(-size * 0.02, 0);
+            ctx.lineTo(-size * 0.06, size * 0.4);
+            ctx.lineTo(-size * 0.1, size * 0.85);
+            ctx.lineTo(-size * 0.08, size * 0.9);
+            ctx.lineTo(-size * 0.04, size * 0.45);
+            ctx.lineTo(size * 0.02, size * 0.05);
+            ctx.closePath();
             ctx.fill();
             ctx.restore();
         }
