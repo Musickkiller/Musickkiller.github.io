@@ -169,7 +169,12 @@
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             font-family: 'Courier New', monospace; color: var(--primary); padding: 40px; transition: opacity 0.5s;
         }
-        .hack-overlay.hidden { opacity: 0; pointer-events: none; }
+        /* ИСПРАВЛЕНО: Добавлено display: none для полного скрытия */
+        .hack-overlay.hidden { 
+            opacity: 0; 
+            pointer-events: none; 
+            display: none;
+        }
         .hack-text { font-size: 14px; line-height: 1.6; white-space: pre-wrap; max-width: 800px; text-align: left; }
         .hack-cursor { display: inline-block; width: 10px; height: 16px; background: var(--primary); animation: blink 0.7s infinite; vertical-align: middle; }
         @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
@@ -748,10 +753,6 @@
             }
             await new Promise(r => setTimeout(r, 500));
             hackOverlay.classList.add('hidden');
-            // Принудительно скрываем оверлей через display:none после анимации
-            setTimeout(() => {
-                hackOverlay.style.display = 'none';
-            }, 600);
         }
         let typewriterTimeout;
         function typeWriter(text, element, speed = 50) {
@@ -1014,9 +1015,9 @@
             } else if (volume < 0.3) {
                 volumeIcon.textContent = '🔈';
             } else if (volume < 0.7) {
-                volumeIcon.textContent = '🔉';
-            } else {
                 volumeIcon.textContent = '';
+            } else {
+                volumeIcon.textContent = '🔊';
             }
         }
         function updateLikeDislikeUI(track) {
