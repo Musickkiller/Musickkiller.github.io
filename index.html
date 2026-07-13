@@ -130,6 +130,8 @@
             text-align: left;
             text-transform: uppercase;
             letter-spacing: 1px;
+            position: relative;
+            padding-left: 40px;
         }
         .playlist-btn:hover {
             background: var(--border);
@@ -139,6 +141,17 @@
             background: rgba(var(--primary-rgb), 0.2);
             color: var(--primary);
             border-color: var(--primary);
+        }
+        .playlist-btn::before {
+            content: '☐';
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+        }
+        .playlist-btn.active::before {
+            content: '☑';
         }
 
         .hack-overlay {
@@ -202,8 +215,6 @@
         }
         .search-input:focus { border-color: var(--primary); }
         .search-input::placeholder { color: var(--text-dim); }
-
-        /* УБРАНЫ ВКЛАДКИ С ПЛЕЕРА */
 
         .track-list {
             background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px;
@@ -362,7 +373,6 @@
         <button class="category-toggle-btn" id="categoryToggleBtn">Категории</button>
         <div class="category-panel" id="categoryPanel">
             <div class="category-title">Плейлисты</div>
-            <!-- ДОБАВЛЕНЫ КНОПКИ ПЛЕЙЛИСТОВ -->
             <button class="playlist-btn active" data-playlist="all">Все треки</button>
             <button class="playlist-btn" data-playlist="chill">Chill</button>
             <button class="playlist-btn" data-playlist="nostalgia">Ностальгия</button>
@@ -382,14 +392,12 @@
 
         <input type="text" class="search-input" id="searchInput" placeholder="Поиск треков...">
         
-        <!-- ВКЛАДКИ УБРАНЫ -->
-        
         <div class="track-list" id="trackList"></div>
         
         <div class="nav-buttons">
-            <button class="nav-btn" id="prevBtn" title="Предыдущий (←)">◄</button>
-            <button class="nav-btn" id="rouletteBtn" title="Рулетка (R)"></button>
-            <button class="nav-btn" id="loopBtn" title="Режим повтора (L)">🔁</button>
+            <button class="nav-btn" id="prevBtn" title="Предыдущий (←)"></button>
+            <button class="nav-btn" id="rouletteBtn" title="Рулетка (R)">🎰</button>
+            <button class="nav-btn" id="loopBtn" title="Режим повтора (L)"></button>
             <button class="nav-btn" id="nextBtn" title="Следующий (→)">►</button>
         </div>
         
@@ -409,7 +417,7 @@
         </div>
         
         <div class="volume-section">
-            <span class="volume-icon" id="volumeIcon">🔊</span>
+            <span class="volume-icon" id="volumeIcon"></span>
             <div class="volume-slider-container" id="volumeContainer">
                 <div class="volume-level" id="volumeLevel"></div>
                 <div class="volume-thumb" id="volumeThumb"></div>
@@ -478,14 +486,14 @@
             theme: localStorage.getItem('wn_theme') || 'default',
             volume: parseFloat(localStorage.getItem('wn_volume')) || 0.8,
             loopMode: localStorage.getItem('wn_loopMode') || 'all',
-            currentPlaylist: localStorage.getItem('wn_playlist') || 'all',
+            selectedPlaylists: JSON.parse(localStorage.getItem('wn_playlists')) || ['all'],
             currentTrackIndex: parseInt(localStorage.getItem('wn_currentTrackIndex')) || 0,
             likedTracks: JSON.parse(localStorage.getItem('wn_liked')) || [],
             dislikedTracks: JSON.parse(localStorage.getItem('wn_disliked')) || []
         };
 
         let currentThemeIndex = themes.indexOf(savedState.theme);
-        let currentPlaylist = savedState.currentPlaylist;
+        let selectedPlaylists = savedState.selectedPlaylists;
         let currentTrackIndex = savedState.currentTrackIndex;
         let volume = savedState.volume;
         let loopMode = savedState.loopMode;
@@ -500,7 +508,7 @@
             localStorage.setItem('wn_theme', themes[currentThemeIndex]);
             localStorage.setItem('wn_volume', volume);
             localStorage.setItem('wn_loopMode', loopMode);
-            localStorage.setItem('wn_playlist', currentPlaylist);
+            localStorage.setItem('wn_playlists', JSON.stringify(selectedPlaylists));
             localStorage.setItem('wn_currentTrackIndex', currentTrackIndex);
             localStorage.setItem('wn_liked', JSON.stringify(savedState.likedTracks));
             localStorage.setItem('wn_disliked', JSON.stringify(savedState.dislikedTracks));
@@ -509,25 +517,42 @@
         function getCurrentTracks() {
             let tracks = [];
             
-            if (currentPlaylist === 'all') {
+            if (selectedPlaylists.includes('all')) {
                 tracks = [...playlists.chill, ...playlists.nostalgia];
                 if (secretUnlocked) tracks = tracks.concat(playlists.secret);
-            } else if (currentPlaylist === 'chill') {
-                tracks = [...playlists.chill];
-            } else if (currentPlaylist === 'nostalgia') {
-                tracks = [...playlists.nostalgia];
-                if (secretUnlocked) tracks = tracks.concat(playlists.secret);
-            } else if (currentPlaylist === 'favorites') {
-                tracks = allTracks.filter(t => savedState.likedTracks.includes(`${t.artist} - ${t.name}`));
-            } else if (currentPlaylist === 'disliked') {
-                tracks = allTracks.filter(t => savedState.dislikedTracks.includes(`${t.artist} - ${t.name}`));
+            } else {
+                if (selectedPlaylists.includes('chill')) {
+                    tracks = tracks.concat(playlists.chill);
+                }
+                if (selectedPlaylists.includes('nostalgia')) {
+                    tracks = tracks.concat(playlists.nostalgia);
+                    if (secretUnlocked) tracks = tracks.concat(playlists.secret);
+                }
+                if (selectedPlaylists.includes('favorites')) {
+                    const favTracks = allTracks.filter(t => savedState.likedTracks.includes(`${t.artist} - ${t.name}`));
+                    tracks = tracks.concat(favTracks);
+                }
+                if (selectedPlaylists.includes('disliked')) {
+                    const disTracks = allTracks.filter(t => savedState.dislikedTracks.includes(`${t.artist} - ${t.name}`));
+                    tracks = tracks.concat(disTracks);
+                }
             }
 
+            // Удаляем дубликаты
+            const uniqueTracks = [];
+            const seen = new Set();
+            tracks.forEach(track => {
+                if (!seen.has(track.src)) {
+                    seen.add(track.src);
+                    uniqueTracks.push(track);
+                }
+            });
+
             if (searchQuery) {
-                tracks = tracks.filter(t => t.name.toLowerCase().includes(searchQuery) || t.artist.toLowerCase().includes(searchQuery));
+                return uniqueTracks.filter(t => t.name.toLowerCase().includes(searchQuery) || t.artist.toLowerCase().includes(searchQuery));
             }
             
-            return tracks;
+            return uniqueTracks;
         }
 
         const audio = document.getElementById('audio');
@@ -787,8 +812,8 @@
         function renderTrackList() {
             trackList.innerHTML = '';
             const tracks = getCurrentTracks();
-            if (tracks.length === 0 && (currentPlaylist === 'favorites' || currentPlaylist === 'disliked')) {
-                trackList.innerHTML = `<div style="padding:15px; color:var(--text-dim); text-align:center; font-size:0.8rem;">${currentPlaylist === 'favorites' ? 'Пока ничего не добавлено в избранное' : 'Список дизлайков пуст'}</div>`;
+            if (tracks.length === 0) {
+                trackList.innerHTML = `<div style="padding:15px; color:var(--text-dim); text-align:center; font-size:0.8rem;">Нет треков в выбранных плейлистах</div>`;
                 return;
             }
             tracks.forEach((track, index) => {
@@ -878,14 +903,7 @@
             }
             updateLikeDislikeUI(track);
             saveState();
-            if (currentPlaylist === 'favorites' || currentPlaylist === 'disliked') {
-                const newTracks = getCurrentTracks();
-                currentTrackIndex = Math.min(currentTrackIndex, newTracks.length - 1);
-                renderTrackList();
-                if(newTracks.length > 0 && currentTrackIndex >= 0) {
-                     updateLikeDislikeUI(newTracks[currentTrackIndex]);
-                }
-            }
+            renderTrackList();
         }
         function toggleDislike() {
             const tracks = getCurrentTracks();
@@ -900,28 +918,46 @@
             }
             updateLikeDislikeUI(track);
             saveState();
-            if (currentPlaylist === 'favorites' || currentPlaylist === 'disliked') {
-                const newTracks = getCurrentTracks();
-                currentTrackIndex = Math.min(currentTrackIndex, newTracks.length - 1);
-                renderTrackList();
-                if(newTracks.length > 0 && currentTrackIndex >= 0) {
-                     updateLikeDislikeUI(newTracks[currentTrackIndex]);
-                }
-            }
+            renderTrackList();
         }
         likeBtn.addEventListener('click', toggleLike);
         dislikeBtn.addEventListener('click', toggleDislike);
         
-        // ОБРАБОТКА КНОПОК ПЛЕЙЛИСТОВ
+        // ОБРАБОТКА КНОПОК ПЛЕЙЛИСТОВ С МНОЖЕСТВЕННЫМ ВЫБОРОМ
         playlistBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const playlist = btn.dataset.playlist;
-                if (playlist === currentPlaylist) return;
                 
-                playlistBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+                if (playlist === 'all') {
+                    // Если нажали "Все треки", сбрасываем остальные
+                    selectedPlaylists = ['all'];
+                    playlistBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                } else {
+                    // Удаляем "Все треки" если выбран другой плейлист
+                    if (selectedPlaylists.includes('all')) {
+                        selectedPlaylists = [];
+                        playlistBtns.forEach(b => b.classList.remove('active'));
+                    }
+                    
+                    // Переключаем текущий плейлист
+                    if (selectedPlaylists.includes(playlist)) {
+                        selectedPlaylists = selectedPlaylists.filter(p => p !== playlist);
+                        btn.classList.remove('active');
+                    } else {
+                        selectedPlaylists.push(playlist);
+                        btn.classList.add('active');
+                    }
+                    
+                    // Если ничего не выбрано, выбираем "Все треки"
+                    if (selectedPlaylists.length === 0) {
+                        selectedPlaylists = ['all'];
+                        playlistBtns.forEach(b => {
+                            if (b.dataset.playlist === 'all') b.classList.add('active');
+                        });
+                    }
+                }
                 
-                currentPlaylist = playlist;
                 currentTrackIndex = 0;
                 searchQuery = '';
                 searchInput.value = '';
@@ -971,7 +1007,7 @@
         }
         function toggleLoopMode() {
             const modes = ['all', 'one', 'shuffle'];
-            const icons = ['🔁', '🔂', '🔀'];
+            const icons = ['🔁', '🔂', ''];
             const currentIndex = modes.indexOf(loopMode);
             loopMode = modes[(currentIndex + 1) % modes.length];
             loopBtn.textContent = icons[(currentIndex + 1) % modes.length];
@@ -1077,7 +1113,7 @@
             winnerItems.forEach((item, idx) => {
                 if (idx % getCurrentTracks().length === winnerIndex) item.classList.add('winner');
             });
-            rouletteResult.textContent = `🎵 ${winnerTrack.name} — ${winnerTrack.artist}`;
+            rouletteResult.textContent = ` ${winnerTrack.name} — ${winnerTrack.artist}`;
             rouletteResult.classList.add('visible');
             setTimeout(() => {
                 loadTrack(winnerIndex, true);
@@ -1096,9 +1132,9 @@
             audio.volume = volume;
             updateVolumeUI();
             
-            // Устанавливаем активную кнопку плейлиста
+            // Устанавливаем активные кнопки плейлистов
             playlistBtns.forEach(btn => {
-                if (btn.dataset.playlist === currentPlaylist) {
+                if (selectedPlaylists.includes(btn.dataset.playlist)) {
                     btn.classList.add('active');
                 }
             });
