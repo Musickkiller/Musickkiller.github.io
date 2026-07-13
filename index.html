@@ -840,11 +840,10 @@
             const leafletCount = 7;
             const angles = [-60, -40, -20, 0, 20, 40, 60];
             const lengths = [0.65, 0.8, 0.92, 1.0, 0.92, 0.8, 0.65];
-
             for (let i = 0; i < leafletCount; i++) {
                 const angle = angles[i] * Math.PI / 180;
                 const length = size * lengths[i];
-                const baseWidth = size * 0.12 length[i];
+                const baseWidth = size * 0.12 * lengths[i];
                 ctx.save();
                 ctx.rotate(angle);
                 ctx.beginPath();
@@ -858,7 +857,6 @@
                         const toothSize = baseWidth * 0.5 * Math.sin(progress * Math.PI);
                         y -= toothSize;
                     }
-            
                     if (t === 0) ctx.lineTo(x, y);
                     else ctx.lineTo(x, y);
                 }
@@ -867,15 +865,15 @@
                     const progress = t / teethPerSide;
                     const x = -length * progress;
                     let y = baseWidth * (1 - progress * 0.3);
-                     if (t > 0 && t < teethPerSide) {
-                         const toothSize = baseWidth * 0.5 * Math.sin(progress * Math.PI);
-                         y += toothSize;
-                     }
+                    if (t > 0 && t < teethPerSide) {
+                        const toothSize = baseWidth * 0.5 * Math.sin(progress * Math.PI);
+                        y += toothSize;
+                    }
                     ctx.lineTo(x, y);
                 }
                 ctx.closePath();
                 ctx.fill();
-                ctx.restore(); 
+                ctx.restore();
             }
             ctx.beginPath();
             ctx.moveTo(0, 0);
