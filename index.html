@@ -151,7 +151,7 @@
             pointer-events: none;
         }
         
-        /* Затемнение поверх видео для читаемости плеера */
+        /* Затемнение поверх видео */
         #video-bg::after {
             content: '';
             position: absolute;
@@ -558,105 +558,118 @@
             background: rgba(var(--primary-rgb), 0.1);
         }
 
-        /*  ВИДИМАЯ РУЛЕТКА */
-        .roulette-panel {
+        /* ========== РУЛЕТКА ========== */
+        .roulette-container {
             position: absolute;
-            top: 50%;
+            top: -120px;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: linear-gradient(145deg, rgba(20, 22, 29, 0.98), rgba(27, 30, 38, 0.98));
-            border: 3px solid var(--primary);
-            border-radius: 16px;
-            padding: 30px;
-            width: 400px;
-            max-height: 400px;
+            transform: translateX(-50%) translateY(100%);
+            width: 90%;
+            max-width: 350px;
+            background: linear-gradient(145deg, var(--bg-card), rgba(27, 30, 38, 0.98));
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.5);
             z-index: 100;
             opacity: 0;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 0 0 40px rgba(var(--primary-rgb), 0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
-        .roulette-panel.visible {
-            transform: translate(-50%, -50%) scale(1);
+        .roulette-container.visible {
             opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
         }
+        
         .roulette-title {
-            font-size: 1.5rem;
             color: var(--primary);
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 15px;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px var(--primary);
-        }
-        .roulette-window {
-            width: 100%;
-            height: 200px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-            margin-bottom: 20px;
-        }
-        .roulette-track {
-            position: absolute;
-            width: 100%;
-            transition: transform 0.1s linear;
-        }
-        .roulette-item {
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            color: var(--text-dim);
-            border-bottom: 1px solid var(--border);
-            transition: all 0.3s;
-        }
-        .roulette-item.active {
-            background: rgba(var(--primary-rgb), 0.3);
-            color: var(--primary);
+            letter-spacing: 2px;
             font-weight: bold;
-            transform: scale(1.1);
         }
-        .roulette-item.winner {
-            background: rgba(var(--primary-rgb), 0.6);
-            color: #fff;
-            box-shadow: 0 0 20px var(--primary);
-            animation: winnerPulse 0.5s ease;
+        
+        .roulette-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-panel);
         }
-        @keyframes winnerPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-        }
+        
+        /* Указатель сверху */
         .roulette-pointer {
             position: absolute;
-            top: 50%;
-            left: -15px;
-            transform: translateY(-50%);
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-left: 15px solid var(--primary);
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 12px solid var(--primary);
             z-index: 10;
+            filter: drop-shadow(0 0 8px rgba(var(--primary-rgb), 0.8));
         }
-        .roulette-close {
-            background: var(--border);
-            color: var(--text);
-            border: 1px solid var(--primary);
-            padding: 10px 30px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
+        
+        .roulette-track-list {
+            display: flex;
+            gap: 0;
+            transition: none;
+            will-change: transform;
+        }
+        
+        .roulette-track-item {
+            flex: 0 0 120px;
+            padding: 10px 8px;
+            text-align: center;
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            font-size: 0.7rem;
+            color: var(--text-dim);
             transition: all 0.3s;
         }
-        .roulette-close:hover {
-            background: var(--primary);
-            color: var(--bg-dark);
+        .roulette-track-item:last-child {
+            border-right: none;
+        }
+        .roulette-track-item.winner {
+            background: rgba(var(--primary-rgb), 0.2);
+            color: var(--primary);
+            font-weight: bold;
+            box-shadow: inset 0 0 20px rgba(var(--primary-rgb), 0.3);
+        }
+        .roulette-track-item .track-title {
+            font-weight: bold;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .roulette-track-item .track-artist {
+            font-size: 0.65rem;
+            opacity: 0.7;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .roulette-result {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(var(--primary-rgb), 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 6px;
+            text-align: center;
+            color: var(--primary);
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .roulette-result.visible {
+            opacity: 1;
         }
 
         /* RIPPLE ЭФФЕКТ */
@@ -744,16 +757,16 @@
             <div class="history-title">История прослушиваний</div>
             <div id="historyList"></div>
         </div>
-    </div>
-
-    <!--  ПАНЕЛЬ РУЛЕТКИ -->
-    <div class="roulette-panel" id="roulettePanel">
-        <div class="roulette-title">🎰 РУЛЕТКА</div>
-        <div class="roulette-window" id="rouletteWindow">
-            <div class="roulette-pointer"></div>
-            <div class="roulette-track" id="rouletteTrack"></div>
+        
+        <!-- РУЛЕТКА -->
+        <div class="roulette-container" id="rouletteContainer">
+            <div class="roulette-title">🎰 РУЛЕТКА 🎰</div>
+            <div class="roulette-wrapper">
+                <div class="roulette-pointer"></div>
+                <div class="roulette-track-list" id="rouletteTrackList"></div>
+            </div>
+            <div class="roulette-result" id="rouletteResult"></div>
         </div>
-        <button class="roulette-close" id="rouletteClose">ЗАКРЫТЬ</button>
     </div>
 
     <script>
@@ -848,10 +861,9 @@
         const cursor = document.getElementById('cursor');
         const hackOverlay = document.getElementById('hackOverlay');
         const hackText = document.getElementById('hackText');
-        const roulettePanel = document.getElementById('roulettePanel');
-        const rouletteTrack = document.getElementById('rouletteTrack');
-        const rouletteWindow = document.getElementById('rouletteWindow');
-        const rouletteClose = document.getElementById('rouletteClose');
+        const rouletteContainer = document.getElementById('rouletteContainer');
+        const rouletteTrackList = document.getElementById('rouletteTrackList');
+        const rouletteResult = document.getElementById('rouletteResult');
 
         // ========== ЭФФЕКТ ВЗЛОМА ==========
         const hackLines = [
@@ -1091,154 +1103,66 @@
         drawMatrix();
         window.addEventListener('resize', initMatrix);
 
-        // ========== 🎰 ВИДИМАЯ РУЛЕТКА ==========
-        let isRouletteSpinning = false;
-        let rouletteInterval;
-        let rouletteScrollPos = 0;
-        let rouletteSpeed = 20;
-        let rouletteTargetIndex = 0;
-
-        function createRouletteItems(tracks) {
-            rouletteTrack.innerHTML = '';
-            // Создаём много копий треков для бесконечной прокрутки
-            for (let i = 0; i < 5; i++) {
-                tracks.forEach((track, index) => {
-                    const item = document.createElement('div');
-                    item.className = 'roulette-item';
-                    item.textContent = `${track.artist} — ${track.name}`;
-                    item.dataset.index = index;
-                    rouletteTrack.appendChild(item);
-                });
-            }
-        }
-
-        function startRoulette() {
-            if (isRouletteSpinning) return;
-            
-            const tracks = getCurrentTracks();
-            isRouletteSpinning = true;
-            rouletteTargetIndex = Math.floor(Math.random() * tracks.length);
-            rouletteSpeed = 20;
-            rouletteScrollPos = 0;
-            
-            // Создаём элементы рулетки
-            createRouletteItems(tracks);
-            
-            // Показываем панель
-            roulettePanel.classList.add('visible');
-            
-            // Начинаем прокрутку
-            function spin() {
-                rouletteScrollPos += rouletteSpeed;
-                rouletteTrack.style.transform = `translateY(-${rouletteScrollPos}px)`;
-                
-                // Подсветка активного элемента
-                const items = rouletteTrack.querySelectorAll('.roulette-item');
-                const visibleIndex = Math.floor(rouletteScrollPos / 60) % items.length;
-                items.forEach((item, i) => {
-                    item.classList.remove('active');
-                    if (i === visibleIndex) {
-                        item.classList.add('active');
-                    }
-                });
-                
-                // Замедление
-                if (rouletteSpeed > 0.5) {
-                    rouletteSpeed *= 0.995;
-                    rouletteInterval = requestAnimationFrame(spin);
-                } else {
-                    // Остановка
-                    finishRoulette(tracks);
-                }
-            }
-            
-            spin();
-        }
-
-        function finishRoulette(tracks) {
-            // Находим победителя
-            const items = rouletteTrack.querySelectorAll('.roulette-item');
-            items.forEach(item => item.classList.remove('active'));
-            
-            // Подсвечиваем победителя
-            const winnerIndex = rouletteTargetIndex % tracks.length;
-            const winnerItems = rouletteTrack.querySelectorAll(`.roulette-item[data-index="${winnerIndex}"]`);
-            if (winnerItems.length > 0) {
-                winnerItems[0].classList.add('winner');
-            }
-            
-            // Выбираем трек
-            currentTrackIndex = winnerIndex;
-            loadTrack(currentTrackIndex);
-            audio.play().catch(e => console.warn('Play error:', e));
-            
-            isRouletteSpinning = false;
-        }
-
-        function closeRoulette() {
-            roulettePanel.classList.remove('visible');
-            if (rouletteInterval) {
-                cancelAnimationFrame(rouletteInterval);
-            }
-            isRouletteSpinning = false;
-        }
-
-        rouletteClose.addEventListener('click', closeRoulette);
-
-        // ========== УПРАВЛЕНИЕ ВИДЕО (ИСПРАВЛЕНО) ==========
+        // ========== УПРАВЛЕНИЕ ВИДЕО ==========
         function showVideo(videoSrc) {
-            console.log(' Попытка показать видео:', videoSrc);
+            console.log('🎬 Попытка показать видео:', videoSrc);
             
-            // Очищаем контейнер
+            // Очищаем предыдущее видео
             videoBg.innerHTML = '';
             
-            // Создаём видео элемент
             const video = document.createElement('video');
             video.src = videoSrc;
             video.autoplay = true;
             video.loop = true;
-            video.muted = true; // Обязательно для autoplay
+            video.muted = true;
             video.playsInline = true;
             video.setAttribute('playsinline', '');
             video.setAttribute('webkit-playsinline', '');
-            video.style.opacity = '0';
-            video.style.transition = 'opacity 1s ease';
+            video.setAttribute('muted', '');
             
-            // Обработка ошибок
+            // Обработка загрузки
+            video.addEventListener('canplay', () => {
+                console.log('✅ Видео готово к воспроизведению');
+                video.play().then(() => {
+                    console.log('▶️ Видео запущено');
+                    videoBg.classList.add('visible');
+                }).catch(err => {
+                    console.warn('⚠️ Ошибка автозапуска:', err);
+                    // Пробуем ещё раз через короткую задержку
+                    setTimeout(() => {
+                        video.play().catch(e => console.error('❌ Не удалось запустить видео:', e));
+                    }, 100);
+                });
+            });
+            
             video.addEventListener('error', (e) => {
                 console.error('❌ Ошибка загрузки видео:', videoSrc, e);
             });
             
-            // Когда видео готово к воспроизведению
-            video.addEventListener('loadeddata', () => {
-                console.log('✅ Видео загружено, пытаемся воспроизвести...');
-                video.play().then(() => {
-                    console.log('▶️ Видео воспроизводится');
-                    video.style.opacity = '1';
-                }).catch(err => {
-                    console.error('❌ Ошибка воспроизведения:', err);
-                });
-            });
-            
             videoBg.appendChild(video);
             
-            // Показываем контейнер
+            // Запускаем воспроизведение (для браузеров, которые не поддерживают canplay)
             setTimeout(() => {
+                if (video.paused) {
+                    video.play().catch(e => console.warn('⚠️ Видео не запустилось автоматически:', e));
+                }
                 videoBg.classList.add('visible');
-            }, 100);
+            }, 500);
+            
+            console.log('🎥 Видео добавлено в DOM');
         }
 
         function hideVideo() {
-            console.log('🎬 Скрытие видео');
             videoBg.classList.remove('visible');
-            
             setTimeout(() => {
                 const video = videoBg.querySelector('video');
                 if (video) {
                     video.pause();
                     video.src = '';
+                    video.load();
                 }
                 videoBg.innerHTML = '';
+                console.log('🎬 Видео удалено');
             }, 1000);
         }
 
@@ -1270,7 +1194,6 @@
             quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
             renderTrackList();
             
-            // Управление видео
             if (track.videoSrc) {
                 console.log('🎥 Трек имеет видео:', track.videoSrc);
                 showVideo(track.videoSrc);
@@ -1279,15 +1202,7 @@
                 hideVideo();
             }
             
-            if (wasPlaying) {
-                audio.play().catch(e => {
-                    console.warn('Play error:', e);
-                    // Пытаемся снова после взаимодействия пользователя
-                    document.addEventListener('click', () => {
-                        audio.play().catch(e => console.warn('Play error:', e));
-                    }, { once: true });
-                });
-            }
+            if (wasPlaying) audio.play().catch(e => console.warn('Play error:', e));
         }
 
         function nextTrack() {
@@ -1411,8 +1326,114 @@
             else volumeIcon.textContent = '🔊';
         }
 
-        // ========== РУЛЕТКА (кнопка) ==========
-        rouletteBtn.addEventListener('click', startRoulette);
+        // ========== РУЛЕТКА ==========
+        let isRouletting = false;
+        
+        function startRoulette() {
+            if (isRouletting) return;
+            isRouletting = true;
+            
+            const tracks = getCurrentTracks();
+            if (tracks.length === 0) {
+                console.warn('Нет треков для рулетки');
+                isRouletting = false;
+                return;
+            }
+            
+            // Создаём список треков для рулетки (дублируем для эффекта бесконечной прокрутки)
+            rouletteTrackList.innerHTML = '';
+            const repeats = 5; // Повторяем список 5 раз для длинной прокрутки
+            for (let r = 0; r < repeats; r++) {
+                tracks.forEach((track, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'roulette-track-item';
+                    item.dataset.index = index;
+                    item.innerHTML = `
+                        <div class="track-title">${track.name}</div>
+                        <div class="track-artist">${track.artist}</div>
+                    `;
+                    rouletteTrackList.appendChild(item);
+                });
+            }
+            
+            // Показываем рулетку
+            rouletteContainer.classList.add('visible');
+            rouletteResult.classList.remove('visible');
+            rouletteResult.textContent = '';
+            
+            // Выбираем случайный трек
+            const winnerIndex = Math.floor(Math.random() * tracks.length);
+            const winnerTrack = tracks[winnerIndex];
+            
+            // Рассчитываем позицию остановки
+            const itemWidth = 120;
+            const containerWidth = rouletteContainer.querySelector('.roulette-wrapper').offsetWidth;
+            const centerOffset = containerWidth / 2 - itemWidth / 2;
+            
+            // Останавливаемся на выбранном треке в середине списка
+            const targetRepeat = 3; // Останавливаемся на 4-м повторении (индекс 3)
+            const targetPosition = (targetRepeat * tracks.length + winnerIndex) * itemWidth - centerOffset;
+            
+            // Начинаем с начальной позиции
+            let currentPosition = 0;
+            rouletteTrackList.style.transform = `translateX(${currentPosition}px)`;
+            
+            // Анимация прокрутки
+            const startTime = Date.now();
+            const duration = 4000; // 4 секунды
+            const startPosition = currentPosition;
+            const endPosition = -targetPosition;
+            
+            function animate() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing функция для замедления (ease-out cubic)
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                
+                const currentPos = startPosition + (endPosition - startPosition) * easeOut;
+                rouletteTrackList.style.transform = `translateX(${currentPos}px)`;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    // Анимация завершена
+                    finishRoulette(winnerTrack, winnerIndex);
+                }
+            }
+            
+            // Запускаем анимацию
+            requestAnimationFrame(animate);
+        }
+        
+        function finishRoulette(winnerTrack, winnerIndex) {
+            console.log('🎰 Победитель рулетки:', winnerTrack.name);
+            
+            // Подсвечиваем победителя
+            const winnerItems = rouletteTrackList.querySelectorAll('.roulette-track-item');
+            winnerItems.forEach((item, idx) => {
+                if (idx % getCurrentTracks().length === winnerIndex) {
+                    item.classList.add('winner');
+                }
+            });
+            
+            // Показываем результат
+            rouletteResult.textContent = `🎵 ${winnerTrack.name} — ${winnerTrack.artist}`;
+            rouletteResult.classList.add('visible');
+            
+            // Загружаем и играем трек через 2 секунды
+            setTimeout(() => {
+                currentTrackIndex = winnerIndex;
+                loadTrack(currentTrackIndex);
+                audio.play().catch(e => console.warn('Play error:', e));
+                
+                // Скрываем рулетку через 3 секунды
+                setTimeout(() => {
+                    rouletteContainer.classList.remove('visible');
+                    isRouletting = false;
+                }, 3000);
+            }, 2000);
+        }
 
         // ========== РЕЖИМ ПОВТОРА ==========
         function toggleLoopMode() {
@@ -1498,7 +1519,7 @@
                 konamiIndex++;
                 if (konamiIndex === konamiCode.length) {
                     secretUnlocked = true;
-                    alert('СЕКРЕТНЫЙ ТРЕК РАЗБЛОКИРОВАН!');
+                    alert('🎉 СЕКРЕТНЫЙ ТРЕК РАЗБЛОКИРОВАН!');
                     renderTrackList();
                     konamiIndex = 0;
                 }
@@ -1542,11 +1563,6 @@
                 case 'KeyL':
                     toggleLoopMode();
                     break;
-                case 'Escape':
-                    if (roulettePanel.classList.contains('visible')) {
-                        closeRoulette();
-                    }
-                    break;
             }
         });
 
@@ -1555,7 +1571,7 @@
             titleClickCount++;
             if (titleClickCount >= 10) {
                 secretUnlocked = true;
-                alert('СЕКРЕТНЫЙ ТРЕК РАЗБЛОКИРОВАН!');
+                alert('🎉 СЕКРЕТНЫЙ ТРЕК РАЗБЛОКИРОВАН!');
                 renderTrackList();
                 titleClickCount = 0;
             }
@@ -1589,6 +1605,7 @@
         });
 
         themeBtn.addEventListener('click', cycleTheme);
+        rouletteBtn.addEventListener('click', startRoulette);
         loopBtn.addEventListener('click', toggleLoopMode);
 
         // ========== СОБЫТИЯ ==========
