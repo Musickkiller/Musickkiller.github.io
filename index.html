@@ -105,29 +105,19 @@
         }
 
         /* ИСПРАВЛЕНИЕ ПОРЯДКА СЛОЁВ (Z-INDEX) */
-        #matrix-canvas {
+        #video-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.15;
-        }
-
-        #video-bg {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1;
-            pointer-events: none;
             opacity: 0;
             transition: opacity 1s ease;
             overflow: hidden;
-            background: transparent; /* Убран черный фон */
+            background: transparent;
         }
         #video-bg.visible { opacity: 1; }
         
-        /* ИСПРАВЛЕНИЕ: Надежное покрытие экрана при любом зуме */
         #video-bg video {
             position: absolute;
             top: 50%;
@@ -138,20 +128,17 @@
             transform: translate(-50%, -50%);
             pointer-events: none;
         }
+        
+        /* УБРАНО ЗАТЕМНЕНИЕ: задний фон больше не мешает видео */
         #video-bg::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.15); /* Легкое затемнение для читаемости */
-            pointer-events: none;
+            display: none; 
         }
 
         #visualizer {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: 2;
+            z-index: 1;
             pointer-events: none;
         }
 
@@ -203,16 +190,16 @@
             width: 380px;
             text-align: center;
             position: relative;
-            z-index: 3;
+            z-index: 2;
             backdrop-filter: blur(6px);
             transition: background 1s ease, backdrop-filter 1s ease, box-shadow 0.1s, border-color 1s ease;
             overflow: visible;
         }
 
         .player-card.video-active {
-            background: rgba(13, 14, 18, 0.2) !important;
-            backdrop-filter: blur(3px);
-            border-color: rgba(var(--primary-rgb), 0.5);
+            background: rgba(13, 14, 18, 0.15) !important;
+            backdrop-filter: blur(2px);
+            border-color: rgba(var(--primary-rgb), 0.4);
         }
 
         .title {
@@ -701,7 +688,7 @@
 </head>
 <body>
     <div class="crt-overlay"></div>
-    <canvas id="matrix-canvas"></canvas>
+    <!-- МАТРИЦА УДАЛЕНА -->
     <div class="custom-cursor" id="cursor"></div>
     
     <div class="hack-overlay" id="hackOverlay">
@@ -731,7 +718,8 @@
             <button class="nav-btn" id="nextBtn" title="Следующий (→)">►</button>
         </div>
 
-        <audio id="audio" preload="auto"></audio>
+        <!-- ДОБАВЛЕН crossorigin ДЛЯ РАБОТЫ АНАЛИЗА ЗВУКА -->
+        <audio id="audio" preload="auto" crossorigin="anonymous"></audio>
 
         <div class="controls">
             <button class="play-btn" id="playBtn">PLAY</button>
@@ -920,6 +908,41 @@
         }
         setInterval(triggerGlitch, 5000);
 
+        // ========== WEB AUDIO API ДЛЯ РЕАКЦИИ НА ЗВУК ==========
+        let audioContext, analyser, dataArray, source;
+
+        function initAudioContext() {
+            if (audioContext) return;
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                source = audioContext.createMediaElementSource(audio);
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+            } catch (e) {
+                console.warn("Анализ звука заблокирован (возможно, из-за CORS). Используется громкость ползунка.");
+            }
+        }
+
+        function getAudioLevel() {
+            if (analyser && !audio.paused) {
+                analyser.getByteFrequencyData(dataArray);
+                let sum = 0;
+                // Анализируем только низкие и средние частоты (басы)
+                for (let i = 0; i < 40; i++) {
+                    sum += dataArray[i];
+                }
+                let level = (sum / 40) / 255;
+                // Усиливаем эффект, чтобы волны были заметнее
+                return Math.max(0.2, level * 1.8); 
+            }
+            // Фоллбэк: если анализ недоступен, используем громкость ползунка
+            return Math.max(0.2, volume);
+        }
+        // ==========================================================
+
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
 
@@ -1039,55 +1062,17 @@
             const WIDTH = canvas.width;
             const HEIGHT = canvas.height;
             
-            // ИСПРАВЛЕНИЕ: Полная очистка холста вместо рисования темного слоя.
-            // Это позволяет видео оставаться идеально видимым под волнами!
             ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
             const isPlaying = !audio.paused && !audio.ended;
-            const volumeFactor = isPlaying ? Math.max(0.3, volume) : 0.3;
+            // ПОЛУЧАЕМ РЕАЛЬНЫЙ УРОВЕНЬ ЗВУКА (или громкость как фоллбэк)
+            const dynamicVolume = getAudioLevel();
             time += 1;
 
-            drawGlow(volumeFactor);
-            for (const wave of waves) drawWave(wave, time, volumeFactor);
-            drawParticles(time, volumeFactor);
+            drawGlow(dynamicVolume);
+            for (const wave of waves) drawWave(wave, time, dynamicVolume);
+            drawParticles(time, dynamicVolume);
         }
-
-        const matrixCanvas = document.getElementById('matrix-canvas');
-        const matrixCtx = matrixCanvas.getContext('2d');
-        let matrixColumns = [];
-        const matrixChars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
-
-        function initMatrix() {
-            matrixCanvas.width = window.innerWidth;
-            matrixCanvas.height = window.innerHeight;
-            const columnCount = Math.floor(matrixCanvas.width / 20);
-            matrixColumns = [];
-            for (let i = 0; i < columnCount; i++) {
-                matrixColumns.push(Math.random() * matrixCanvas.height);
-            }
-        }
-
-        function drawMatrix() {
-            const primaryRGB = getComputedStyle(document.documentElement).getPropertyValue('--primary-rgb').trim();
-            matrixCtx.fillStyle = 'rgba(13, 14, 18, 0.05)';
-            matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
-            matrixCtx.fillStyle = `rgba(${primaryRGB}, 0.5)`;
-            matrixCtx.font = '15px monospace';
-
-            for (let i = 0; i < matrixColumns.length; i++) {
-                const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-                matrixCtx.fillText(char, i * 20, matrixColumns[i]);
-                if (matrixColumns[i] > matrixCanvas.height && Math.random() > 0.975) {
-                    matrixColumns[i] = 0;
-                }
-                matrixColumns[i] += 20;
-            }
-            requestAnimationFrame(drawMatrix);
-        }
-
-        initMatrix();
-        drawMatrix();
-        window.addEventListener('resize', initMatrix);
 
         let videoLoadAttempts = 0;
         const MAX_VIDEO_ATTEMPTS = 3;
@@ -1099,7 +1084,7 @@
             const video = document.createElement('video');
             video.src = videoSrc;
             video.autoplay = true;
-            video.loop = true;
+            video.loop = false; // ИСПРАВЛЕНО: видео больше не зациклено
             video.muted = true;
             video.playsInline = true;
             video.setAttribute('playsinline', '');
@@ -1240,6 +1225,8 @@
         function togglePlay() {
             if (audio.paused) {
                 if (!audio.src) loadTrack(0);
+                // Инициализируем анализ звука при первом нажатии Play (требование браузеров)
+                initAudioContext();
                 audio.play()
                     .then(() => {
                         playBtn.innerText = 'PAUSE';
