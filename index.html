@@ -365,8 +365,6 @@
             pointer-events: none; transform: scale(0); animation: rippleAnim 0.6s ease-out; z-index: 9997;
         }
         @keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
-
-        /* Адаптация под мобильные устройства */
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -450,8 +448,6 @@
                 margin-top: 5px;
             }
         }
-
-        /* Скрытие курсора на мобильных */
         @media (hover: none) {
             body {
                 cursor: auto;
@@ -473,11 +469,7 @@
 
     <canvas id="visualizer"></canvas>
     <div id="video-bg"></div>
-    
-    <!-- Кнопка открытия/закрытия плейлистов -->
     <button class="category-toggle-btn" id="categoryToggleBtn" title="Плейлисты"></button>
-    
-    <!-- Панель плейлистов с кнопкой закрытия -->
     <div class="category-panel" id="categoryPanel">
         <button class="category-panel-close" id="categoryPanelClose" title="Закрыть">×</button>
         <div class="category-title">Плейлисты</div>
@@ -646,8 +638,6 @@
                     tracks = tracks.concat(disTracks);
                 }
             }
-
-            // Удаляем дубликаты
             const uniqueTracks = [];
             const seen = new Set();
             tracks.forEach(track => {
@@ -656,14 +646,11 @@
                     uniqueTracks.push(track);
                 }
             });
-
             if (searchQuery) {
                 return uniqueTracks.filter(t => t.name.toLowerCase().includes(searchQuery) || t.artist.toLowerCase().includes(searchQuery));
             }
-            
             return uniqueTracks;
         }
-
         const audio = document.getElementById('audio');
         const playBtn = document.getElementById('playBtn');
         const progress = document.getElementById('progress');
@@ -704,7 +691,6 @@
         const categoryPanelClose = document.getElementById('categoryPanelClose');
         const playlistBtns = document.querySelectorAll('.playlist-btn');
         const secretSound = document.getElementById('secretSound');
-
         const hackLines = [
             "> Инициализация системы...",
             "> Подключение к серверу: 192.168.1.666",
@@ -714,12 +700,11 @@
             "> Активация визуализатора... OK",
             "> Проверка секретных данных... ✓",
             "> ",
-            "> WELCOME NAHUI v2.0",
+            "> WELCOME NAHUI v10.0",
             "> Доступ разрешён.",
             "> ",
             "> Запуск плеера..."
         ];
-
         async function playHackEffect() {
             let text = '';
             for (const line of hackLines) {
@@ -735,7 +720,6 @@
             await new Promise(r => setTimeout(r, 500));
             hackOverlay.classList.add('hidden');
         }
-
         let typewriterTimeout;
         function typeWriter(text, element, speed = 50) {
             clearTimeout(typewriterTimeout);
@@ -750,7 +734,6 @@
             }
             type();
         }
-
         function triggerGlitch() {
             titleText.classList.add('glitch');
             setTimeout(() => titleText.classList.remove('glitch'), 300);
@@ -768,7 +751,6 @@
             }
             setTimeout(() => titleClickCount = 0, 2000);
         });
-
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
         function resizeCanvas() {
@@ -1032,8 +1014,6 @@
         }
         likeBtn.addEventListener('click', toggleLike);
         dislikeBtn.addEventListener('click', toggleDislike);
-        
-        // Открытие/закрытие панели плейлистов
         function toggleCategoryPanel() {
             categoryPanel.classList.toggle('visible');
         }
@@ -1043,7 +1023,6 @@
             categoryPanel.classList.remove('visible');
         });
         
-        // Закрытие панели при клике вне её
         document.addEventListener('click', (e) => {
             if (categoryPanel.classList.contains('visible') && 
                 !categoryPanel.contains(e.target) && 
@@ -1051,8 +1030,6 @@
                 categoryPanel.classList.remove('visible');
             }
         });
-        
-        // ОБРАБОТКА КНОПОК ПЛЕЙЛИСТОВ С МНОЖЕСТВЕННЫМ ВЫБОРОМ
         playlistBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const playlist = btn.dataset.playlist;
@@ -1170,8 +1147,6 @@
                 case 'KeyL': toggleLoopMode(); break;
             }
         });
-        
-        // Управление курсором только на десктопе
         if (!('ontouchstart' in window)) {
             document.addEventListener('mousemove', (e) => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; });
             document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
