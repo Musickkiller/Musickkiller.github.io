@@ -838,44 +838,49 @@
             ctx.translate(x, y);
             ctx.rotate(rotation);
             const leafletCount = 7;
-            const angles = [-60, -40, -20, 0, 20, 40, 60]; // Углы для 7 лепестков
-            const lengths = [0.5, 0.7, 0.85, 1.0, 0.85, 0.7, 0.5]; // Длина каждого лепестка
-            ctx.beginPath();
+            const angles = [-60, -40, -20, 0, 20, 40, 60];
+            const lengths = [0.65, 0.8, 0.92, 1.0, 0.92, 0.8, 0.65];
+
             for (let i = 0; i < leafletCount; i++) {
                 const angle = angles[i] * Math.PI / 180;
                 const length = size * lengths[i];
-                const teethCount = Math.floor(lengths[i] * 12);
-                if (i === 0) {
-                    ctx.moveTo(0, 0);
-                }
-                for (let t = 0; t <= teethCount; t++) {
-                    const progress = t / teethCount;
-                    const toothAngle = angle + (progress - 0.5) * 0.3; // Небольшой разброс
-                    let radius = progress * length;
-                    if (t > 0 && t < teethCount) {
-                        const toothHeight = length * 0.08 * (1 - Math.abs(progress - 0.5) * 1.5);
-                        const isRightEdge = t > teethCount / 2;
-                        const toothOffset = isRightEdge ? toothHeight : -toothHeight;
-                        radius += toothOffset * 0.3;
+                const baseWidth = size * 0.12 length[i];
+                ctx.save();
+                ctx.rotate(angle);
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                const teethPerSide = 6;
+                for (let t = 0; t <= teethPerSide; t++) {
+                    const progress = t / teethPerSide;
+                    const x = -length * progress;
+                    let y = -baseWidth * (1 - progress * 0.3);
+                    if (t > 0 && t < teethPerSide) {
+                        const toothSize = baseWidth * 0.5 * Math.sin(progress * Math.PI);
+                        y -= toothSize;
                     }
-                    const px = Math.sin(toothAngle) * radius;
-                    const py = -Math.cos(toothAngle) * radius;
-                    if (t === 0) {
-                        ctx.lineTo(px, py);
-                    } else {
-                        ctx.lineTo(px, py);
-                    }
+            
+                    if (t === 0) ctx.lineTo(x, y);
+                    else ctx.lineTo(x, y);
                 }
-                ctx.lineTo(0, 0);
+                ctx.lineTo(-length, 0);
+                for (let t = teethPerSide; t >= 0; t--) {
+                    const progress = t / teethPerSide;
+                    const x = -length * progress;
+                    let y = baseWidth * (1 - progress * 0.3);
+                     if (t > 0 && t < teethPerSide) {
+                         const toothSize = baseWidth * 0.5 * Math.sin(progress * Math.PI);
+                         y += toothSize;
+                     }
+                    ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore(); 
             }
-            ctx.closePath();
+            ctx.beginPath();
             ctx.moveTo(0, 0);
-            ctx.lineTo(-size * 0.15, size * 0.6);
-            ctx.lineTo(size * 0.15, size * 0.6);
-            ctx.lineTo(0, 0);
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = ctx.fillStyle;
-            ctx.stroke();
+            ctx.quadraticCurveTo(-size * 0.05, size * 0.3, -size * 0.1, size * 0.55);
+            ctx.quadraticCurveTo(size * 0.05, size * 0.3, 0, 0);
             ctx.fill();
             ctx.restore();
         }
