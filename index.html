@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WELCOME NAHUI</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>CHILL</text></svg>">
     <style>
-        /* CSS VARIABLES ДЛЯ ТЕМ */
         :root {
             --primary: #57f287;
             --primary-rgb: 87, 242, 135;
             --secondary: #78ffaa;
-            /* ИСПРАВЛЕНИЕ: Фон сделан немного светлее */
             --bg-dark: #15171e; 
             --bg-card: rgba(30, 33, 42, 0.92);
             --bg-panel: rgba(35, 38, 48, 0.85);
@@ -39,9 +37,7 @@
             --primary-rgb: 255, 0, 255;
             --secondary: #00ffff;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
         body { cursor: none; }
         .custom-cursor {
             position: fixed;
@@ -70,7 +66,6 @@
             width: 15px;
             height: 15px;
         }
-
         body {
             background-color: var(--bg-dark);
             font-family: 'Courier New', Courier, monospace;
@@ -82,7 +77,6 @@
             overflow: hidden;
             position: relative;
         }
-        
         .crt-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -117,7 +111,6 @@
             background: transparent;
         }
         #video-bg.visible { opacity: 1; }
-        
         #video-bg video {
             position: absolute;
             top: 50%;
@@ -128,7 +121,6 @@
             transform: translate(-50%, -50%);
             pointer-events: none;
         }
-
         #visualizer {
             position: fixed;
             top: 0; left: 0;
@@ -136,7 +128,6 @@
             z-index: 1;
             pointer-events: none;
         }
-
         .hack-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -175,7 +166,6 @@
             0%, 50% { opacity: 1; }
             51%, 100% { opacity: 0; }
         }
-
         .player-card {
             background: linear-gradient(145deg, var(--bg-card), rgba(35, 38, 48, 0.92));
             border: 2px solid var(--primary);
@@ -190,13 +180,11 @@
             transition: background 1s ease, backdrop-filter 1s ease, box-shadow 0.1s, border-color 1s ease;
             overflow: visible;
         }
-
         .player-card.video-active {
             background: rgba(21, 23, 30, 0.25) !important;
             backdrop-filter: blur(2px);
             border-color: rgba(var(--primary-rgb), 0.4);
         }
-
         .title {
             font-size: 1.2rem;
             text-transform: uppercase;
@@ -207,7 +195,6 @@
             display: inline-block;
             cursor: pointer;
         }
-        
         .title.glitch::before,
         .title.glitch::after {
             content: attr(data-text);
@@ -241,14 +228,12 @@
             60% { clip-path: inset(20% 0 60% 0); transform: translate(2px, 2px); }
             80% { clip-path: inset(0% 0 80% 0); transform: translate(-2px, -2px); }
         }
-
         .subtitle { 
             font-size: 0.8rem; 
             color: var(--text-dim); 
             margin-bottom: 20px; 
             min-height: 1.2em;
         }
-
         .search-input {
             width: 100%;
             padding: 8px 12px;
@@ -264,7 +249,6 @@
         }
         .search-input:focus { border-color: var(--primary); }
         .search-input::placeholder { color: var(--text-dim); }
-
         .tabs {
             display: flex;
             gap: 0;
@@ -292,7 +276,6 @@
             color: var(--primary);
             border-bottom: 2px solid var(--primary);
         }
-
         .track-list {
             background: var(--bg-panel);
             border: 1px solid var(--border);
@@ -334,7 +317,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
         .controls { margin-bottom: 20px; }
         .play-btn {
             background-color: var(--primary);
@@ -354,7 +336,6 @@
             transform: scale(1.05);
             box-shadow: 0 4px 25px rgba(var(--primary-rgb), 0.6);
         }
-
         .progress-container {
             background-color: var(--border);
             border-radius: 5px;
@@ -430,7 +411,6 @@
             min-width: 35px;
             text-align: right;
         }
-
         .nav-buttons {
             display: flex;
             justify-content: center;
@@ -461,7 +441,6 @@
             background: var(--primary);
             color: var(--bg-dark);
         }
-
         .bottom-controls {
             display: flex;
             justify-content: center;
@@ -483,7 +462,6 @@
             border-color: var(--primary);
             color: var(--primary);
         }
-
         .quote {
             margin-top: 15px;
             font-size: 0.7rem;
@@ -492,7 +470,6 @@
             min-height: 1.5em;
             opacity: 0.7;
         }
-
         .history-panel {
             position: absolute;
             top: 100%;
@@ -527,8 +504,6 @@
             color: var(--primary);
             background: rgba(var(--primary-rgb), 0.1);
         }
-
-        /* ========== РУЛЕТКА ========== */
         .roulette-wrapper-outer {
             position: absolute;
             top: 50%;
@@ -540,13 +515,11 @@
             opacity: 0;
             transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        
         .roulette-wrapper-outer.visible {
             transform: translateY(-50%) translateX(0);
             opacity: 1;
             pointer-events: auto;
         }
-        
         .roulette-container {
             background: linear-gradient(145deg, var(--bg-card), rgba(35, 38, 48, 0.98));
             border: 2px solid var(--primary);
@@ -555,7 +528,6 @@
             box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.5);
             backdrop-filter: blur(6px);
         }
-        
         .roulette-title {
             color: var(--primary);
             font-size: 0.9rem;
@@ -566,7 +538,6 @@
             font-weight: bold;
             text-shadow: 0 0 10px rgba(var(--primary-rgb), 0.5);
         }
-        
         .roulette-window {
             position: relative;
             overflow: hidden;
@@ -576,7 +547,6 @@
             width: 100%;
             height: 240px;
         }
-        
         .roulette-pointer {
             position: absolute;
             top: 50%;
@@ -602,14 +572,12 @@
             background: linear-gradient(to left, var(--primary), transparent);
             opacity: 0.5;
         }
-        
         .roulette-track-list {
             display: flex;
             flex-direction: column;
             gap: 0;
             will-change: transform;
         }
-        
         .roulette-track-item {
             flex: 0 0 80px;
             width: 100%;
@@ -666,7 +634,6 @@
             opacity: 1;
             transform: translateY(0);
         }
-
         .ripple {
             position: fixed;
             border-radius: 50%;
@@ -684,50 +651,37 @@
 <body>
     <div class="crt-overlay"></div>
     <div class="custom-cursor" id="cursor"></div>
-    
     <div class="hack-overlay" id="hackOverlay">
         <div class="hack-text" id="hackText"></div>
     </div>
-
     <canvas id="visualizer"></canvas>
     <div id="video-bg"></div>
-
     <div class="player-card" id="playerCard">
         <div class="title" id="titleText" data-text="WELCOME NAHUI">WELCOME NAHUI</div>
         <div class="subtitle" id="trackSubtitle">CHILL</div>
-
         <input type="text" class="search-input" id="searchInput" placeholder="🔍 Поиск треков...">
-
         <div class="tabs">
             <button class="tab-btn active" data-tab="chill">Chill</button>
             <button class="tab-btn" data-tab="nostalgia">Ностальгия</button>
         </div>
-
         <div class="track-list" id="trackList"></div>
-
         <div class="nav-buttons">
             <button class="nav-btn" id="prevBtn" title="Предыдущий (←)">◄</button>
             <button class="nav-btn" id="rouletteBtn" title="Рулетка (R)">🎰</button>
             <button class="nav-btn" id="loopBtn" title="Режим повтора (L)">🔁</button>
             <button class="nav-btn" id="nextBtn" title="Следующий (→)">►</button>
         </div>
-
-        <!-- УБРАН crossorigin, чтобы музыка гарантированно играла -->
         <audio id="audio" preload="auto"></audio>
-
         <div class="controls">
             <button class="play-btn" id="playBtn">PLAY</button>
         </div>
-
         <div class="progress-container" id="progressContainer">
             <div class="progress" id="progress"></div>
         </div>
-
         <div class="time-info">
             <span id="currentTime">0:00</span>
             <span id="duration">0:00</span>
         </div>
-
         <div class="volume-section">
             <span class="volume-icon" id="volumeIcon">🔊</span>
             <div class="volume-slider-container" id="volumeContainer">
@@ -736,10 +690,9 @@
             </div>
             <span class="volume-value" id="volumeValue">80%</span>
         </div>
-
         <div class="bottom-controls">
-            <button class="bottom-btn" id="historyBtn">📜 История</button>
-            <button class="bottom-btn" id="themeBtn">🎨 Тема</button>
+            <button class="bottom-btn" id="historyBtn">История</button>
+            <button class="bottom-btn" id="themeBtn">Тема</button>
         </div>
 
         <div class="quote" id="quote"></div>
@@ -748,11 +701,9 @@
             <div class="history-title">История прослушиваний</div>
             <div id="historyList"></div>
         </div>
-        
-        <!-- РУЛЕТКА -->
         <div class="roulette-wrapper-outer" id="rouletteWrapper">
             <div class="roulette-container" id="rouletteContainer">
-                <div class="roulette-title">🎰 РУЛЕТКА 🎰</div>
+                <div class="roulette-title">РУЛЕТКА</div>
                 <div class="roulette-window">
                     <div class="roulette-pointer"></div>
                     <div class="roulette-track-list" id="rouletteTrackList"></div>
@@ -785,14 +736,12 @@
                 { name: "Чистое небо", artist: "S.T.A.L.K.E.R.", src: "https://s4.deliciouspeaches.com/get/music/20101112/STALKER_-_CHistoe_nebo_18190.mp3", secret: true }
             ]
         };
-
         const quotes = [
             "Не учаться ничему некоторые",
             "Кина американского насмотрелись или крышу срывает от жадности",
             "Ты ему про аномалии, он тебе про хабар",
             "Ни о чем думать не хотят, кроме бабок. Пока кишки по веткам не разбросает"
         ];
-
         const themes = ['default', 'blue', 'purple', 'red', 'rad'];
         let currentThemeIndex = 0;
         let currentTab = 'chill';
@@ -805,7 +754,6 @@
         let searchQuery = '';
         const konamiCode = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
         let konamiIndex = 0;
-
         function getCurrentTracks() {
             let tracks = [...playlists[currentTab]];
             if (secretUnlocked) tracks = tracks.concat(playlists.secret);
@@ -814,7 +762,6 @@
             }
             return tracks;
         }
-
         const audio = document.getElementById('audio');
         const playBtn = document.getElementById('playBtn');
         const progress = document.getElementById('progress');
@@ -849,7 +796,6 @@
         const rouletteContainer = document.getElementById('rouletteContainer');
         const rouletteTrackList = document.getElementById('rouletteTrackList');
         const rouletteResult = document.getElementById('rouletteResult');
-
         const hackLines = [
             "> Инициализация системы...",
             "> Подключение к серверу: 192.168.1.666",
@@ -864,7 +810,6 @@
             "> ",
             "> Запуск плеера..."
         ];
-
         async function playHackEffect() {
             let text = '';
             for (const line of hackLines) {
@@ -880,7 +825,6 @@
             await new Promise(r => setTimeout(r, 500));
             hackOverlay.classList.add('hidden');
         }
-
         let typewriterTimeout;
         function typeWriter(text, element, speed = 50) {
             clearTimeout(typewriterTimeout);
@@ -895,29 +839,24 @@
             }
             type();
         }
-
         function triggerGlitch() {
             titleText.classList.add('glitch');
             setTimeout(() => titleText.classList.remove('glitch'), 300);
         }
         setInterval(triggerGlitch, 5000);
-
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
-
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             initParticles();
         }
-
         const waves = [
             { y: 0.65, amplitude: 60, frequency: 0.008, speed: 0.015, color1: 'rgba(var(--primary-rgb), 0.18)', color2: 'rgba(var(--primary-rgb), 0.0)', phase: 0 },
             { y: 0.72, amplitude: 80, frequency: 0.006, speed: 0.010, color1: 'rgba(var(--primary-rgb), 0.25)', color2: 'rgba(var(--primary-rgb), 0.0)', phase: 1.5 },
             { y: 0.80, amplitude: 50, frequency: 0.012, speed: 0.020, color1: 'rgba(var(--primary-rgb), 0.30)', color2: 'rgba(var(--primary-rgb), 0.0)', phase: 3.0 },
             { y: 0.88, amplitude: 35, frequency: 0.015, speed: 0.025, color1: 'rgba(var(--primary-rgb), 0.20)', color2: 'rgba(var(--primary-rgb), 0.0)', phase: 4.5 }
         ];
-
         let particles = [];
         function initParticles() {
             particles = [];
@@ -935,16 +874,13 @@
                 });
             }
         }
-
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-
         function drawWave(wave, time, volumeFactor) {
             const WIDTH = canvas.width;
             const HEIGHT = canvas.height;
             const baseY = HEIGHT * wave.y;
             const amp = wave.amplitude * volumeFactor;
-
             ctx.beginPath();
             ctx.moveTo(0, HEIGHT);
             for (let x = 0; x <= WIDTH; x += 4) {
@@ -957,7 +893,6 @@
             }
             ctx.lineTo(WIDTH, HEIGHT);
             ctx.closePath();
-
             const primaryRGB = getComputedStyle(document.documentElement).getPropertyValue('--primary-rgb').trim();
             const gradient = ctx.createLinearGradient(0, baseY - amp, 0, HEIGHT);
             gradient.addColorStop(0, `rgba(${primaryRGB}, ${0.18 * volumeFactor})`);
@@ -965,7 +900,6 @@
             ctx.fillStyle = gradient;
             ctx.fill();
         }
-
         function drawParticles(time, volumeFactor) {
             const primaryRGB = getComputedStyle(document.documentElement).getPropertyValue('--primary-rgb').trim();
             for (const p of particles) {
@@ -973,15 +907,12 @@
                 p.x += p.speedX * parallaxFactor;
                 p.y += p.speedY * parallaxFactor;
                 p.x += Math.sin(time * 0.01 + p.twinklePhase) * 0.2 * volumeFactor;
-
                 if (p.x < 0) p.x = canvas.width;
                 if (p.x > canvas.width) p.x = 0;
                 if (p.y < 0) p.y = canvas.height;
                 if (p.y > canvas.height) p.y = 0;
-
                 const twinkle = Math.sin(time * p.twinkleSpeed + p.twinklePhase) * 0.5 + 0.5;
                 const alpha = p.alpha * (0.5 + twinkle * 0.5) * (0.4 + volumeFactor * 0.6);
-
                 ctx.beginPath();
                 const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 4);
                 grad.addColorStop(0, `rgba(${primaryRGB}, ${alpha})`);
@@ -997,7 +928,6 @@
                 ctx.fill();
             }
         }
-
         function drawGlow(volumeFactor) {
             const WIDTH = canvas.width;
             const HEIGHT = canvas.height;
@@ -1005,7 +935,6 @@
             const centerY = HEIGHT * 0.7;
             const radius = Math.max(WIDTH, HEIGHT) * 0.5;
             const primaryRGB = getComputedStyle(document.documentElement).getPropertyValue('--primary-rgb').trim();
-
             const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
             const alpha = 0.08 + volumeFactor * 0.12;
             grad.addColorStop(0, `rgba(${primaryRGB}, ${alpha})`);
@@ -1014,32 +943,24 @@
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, WIDTH, HEIGHT);
         }
-
         let time = 0;
         function drawVisualizer() {
             requestAnimationFrame(drawVisualizer);
             const WIDTH = canvas.width;
             const HEIGHT = canvas.height;
-            
             ctx.clearRect(0, 0, WIDTH, HEIGHT);
-
             const isPlaying = !audio.paused && !audio.ended;
-            // Вернули простую и надежную зависимость от громкости ползунка
             const volumeFactor = isPlaying ? Math.max(0.3, volume) : 0.3;
             time += 1;
-
             drawGlow(volumeFactor);
             for (const wave of waves) drawWave(wave, time, volumeFactor);
             drawParticles(time, volumeFactor);
         }
-
         let videoLoadAttempts = 0;
         const MAX_VIDEO_ATTEMPTS = 3;
-        
         function showVideo(videoSrc) {
             console.log('🎬 Попытка показать видео:', videoSrc, '(попытка', videoLoadAttempts + 1, ')');
             videoBg.innerHTML = '';
-            
             const video = document.createElement('video');
             video.src = videoSrc;
             video.autoplay = true;
@@ -1050,63 +971,50 @@
             video.setAttribute('webkit-playsinline', '');
             video.setAttribute('muted', '');
             video.crossOrigin = "anonymous";
-            
             let videoLoaded = false;
-            
             const onCanPlay = () => {
                 if (videoLoaded) return;
                 videoLoaded = true;
-                console.log('✅ Видео готово к воспроизведению');
+                console.log('Видео готово к воспроизведению');
                 videoLoadAttempts = 0;
-                
                 video.play().then(() => {
-                    console.log('▶️ Видео запущено');
+                    console.log('Видео запущено');
                     videoBg.classList.add('visible');
                     playerCard.classList.add('video-active');
                 }).catch(err => {
-                    console.warn('⚠️ Ошибка автозапуска:', err);
+                    console.warn('Ошибка автозапуска:', err);
                     videoBg.classList.add('visible');
                     playerCard.classList.add('video-active');
                 });
-                
                 video.removeEventListener('canplay', onCanPlay);
                 video.removeEventListener('error', onError);
             };
-            
             const onError = (e) => {
                 if (videoLoaded) return;
-                console.error('❌ Ошибка загрузки видео:', e);
+                console.error('Ошибка загрузки видео:', e);
                 videoLoadAttempts++;
-                
                 if (videoLoadAttempts < MAX_VIDEO_ATTEMPTS) {
-                    console.log('🔄 Повторная попытка загрузки через 2 секунды...');
+                    console.log('Повторная попытка загрузки через 2 секунды...');
                     setTimeout(() => showVideo(videoSrc), 2000);
                 } else {
-                    console.warn('⚠️ Видео не удалось загрузить после', MAX_VIDEO_ATTEMPTS, 'попыток.');
+                    console.warn('Видео не удалось загрузить после', MAX_VIDEO_ATTEMPTS, 'попыток.');
                     hideVideo();
                 }
-                
                 video.removeEventListener('canplay', onCanPlay);
                 video.removeEventListener('error', onError);
             };
-            
             video.addEventListener('canplay', onCanPlay);
             video.addEventListener('error', onError);
-            
             videoBg.appendChild(video);
             video.load();
-            
             setTimeout(() => {
                 if (!videoLoaded && video.readyState >= 2) onCanPlay();
             }, 1500);
-            
-            console.log('🎥 Видео добавлено в DOM');
+            console.log('Видео добавлено в DOM');
         }
-
         function hideVideo() {
             videoBg.classList.remove('visible');
             playerCard.classList.remove('video-active');
-            
             setTimeout(() => {
                 const video = videoBg.querySelector('video');
                 if (video) {
@@ -1118,7 +1026,6 @@
                 console.log('🎬 Видео удалено');
             }, 1000);
         }
-
         function renderTrackList() {
             trackList.innerHTML = '';
             const tracks = getCurrentTracks();
@@ -1133,31 +1040,26 @@
                 trackList.appendChild(item);
             });
         }
-
         function loadTrack(index) {
             const wasPlaying = !audio.paused;
             currentTrackIndex = index;
             const tracks = getCurrentTracks();
             const track = tracks[currentTrackIndex];
             audio.src = track.src;
-            
             typeWriter(`${track.artist} — ${track.name}`, trackSubtitle, 40);
             addToHistory(track);
             quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
             renderTrackList();
-            
             if (track.videoSrc) {
-                console.log('🎥 Трек имеет видео:', track.videoSrc);
+                console.log('Трек имеет видео:', track.videoSrc);
                 videoLoadAttempts = 0;
                 showVideo(track.videoSrc);
             } else {
-                console.log('🚫 Трек без видео');
+                console.log('Трек без видео');
                 hideVideo();
             }
-            
             if (wasPlaying) audio.play().catch(e => console.warn('Play error:', e));
         }
-
         function nextTrack() {
             const tracks = getCurrentTracks();
             if (loopMode === 'one') {
@@ -1173,18 +1075,15 @@
             loadTrack(currentTrackIndex);
             audio.play().catch(e => console.warn('Play error:', e));
         }
-
         function prevTrack() {
             const tracks = getCurrentTracks();
             currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
             loadTrack(currentTrackIndex);
             audio.play().catch(e => console.warn('Play error:', e));
         }
-
         function togglePlay() {
             if (audio.paused) {
                 if (!audio.src) loadTrack(0);
-                // УБРАН вызов initAudioContext(), который блокировал звук
                 audio.play()
                     .then(() => {
                         playBtn.innerText = 'PAUSE';
@@ -1200,7 +1099,6 @@
                 playBtn.style.boxShadow = `0 4px 15px rgba(${primaryRGB}, 0.4)`;
             }
         }
-
         function updateProgress(e) {
             const { duration, currentTime } = e.target;
             if (!duration || !isFinite(duration)) return;
@@ -1210,7 +1108,6 @@
             currentTimeEl.innerText = formatTime(currentTime);
             durationEl.innerText = formatTime(duration);
         }
-
         function setProgress(e) {
             const rect = this.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
@@ -1218,7 +1115,6 @@
             if (!duration || !isFinite(duration)) return;
             audio.currentTime = (clickX / rect.width) * duration;
         }
-
         function setVolumeFromPosition(clientX) {
             const rect = volumeContainer.getBoundingClientRect();
             let clickX = clientX - rect.left;
@@ -1227,48 +1123,39 @@
             audio.volume = volume;
             updateVolumeUI();
         }
-
         let isDraggingVolume = false;
-
         volumeThumb.addEventListener('mousedown', (e) => {
             isDraggingVolume = true;
             volumeThumb.classList.add('dragging');
             e.preventDefault();
         });
-
         volumeContainer.addEventListener('mousedown', (e) => {
             if (e.target !== volumeThumb) setVolumeFromPosition(e.clientX);
         });
-
         document.addEventListener('mousemove', (e) => {
             if (isDraggingVolume) setVolumeFromPosition(e.clientX);
         });
-
         document.addEventListener('mouseup', () => {
             if (isDraggingVolume) {
                 isDraggingVolume = false;
                 volumeThumb.classList.remove('dragging');
             }
         });
-
         volumeThumb.addEventListener('touchstart', (e) => {
             isDraggingVolume = true;
             volumeThumb.classList.add('dragging');
         });
-
         document.addEventListener('touchmove', (e) => {
             if (isDraggingVolume && e.touches.length > 0) {
                 setVolumeFromPosition(e.touches[0].clientX);
             }
         });
-
         document.addEventListener('touchend', () => {
             if (isDraggingVolume) {
                 isDraggingVolume = false;
                 volumeThumb.classList.remove('dragging');
             }
         });
-
         function updateVolumeUI() {
             const percent = Math.round(volume * 100);
             volumeLevel.style.width = `${percent}%`;
@@ -1278,22 +1165,17 @@
             else if (volume < 0.5) volumeIcon.textContent = '🔉';
             else volumeIcon.textContent = '🔊';
         }
-
         let isRouletting = false;
-        
         function startRoulette() {
             if (isRouletting) return;
             isRouletting = true;
-            
             const tracks = getCurrentTracks();
             if (tracks.length === 0) {
                 isRouletting = false;
                 return;
             }
-            
             rouletteTrackList.innerHTML = '';
             const repeats = 20;
-            
             for (let r = 0; r < repeats; r++) {
                 tracks.forEach((track, index) => {
                     const item = document.createElement('div');
@@ -1306,66 +1188,51 @@
                     rouletteTrackList.appendChild(item);
                 });
             }
-            
             rouletteWrapper.classList.add('visible');
             rouletteResult.classList.remove('visible');
             rouletteResult.textContent = '';
-            
             const winnerIndex = Math.floor(Math.random() * tracks.length);
             const winnerTrack = tracks[winnerIndex];
-            
             const itemHeight = 80;
             const windowHeight = 240;
             const centerOffset = (windowHeight / 2) - (itemHeight / 2);
-            
             const targetRepeat = 12 + Math.floor(Math.random() * 5);
             const targetItemIndex = (targetRepeat * tracks.length) + winnerIndex;
             const targetItemTopEdge = targetItemIndex * itemHeight;
-            
             const endPosition = centerOffset - targetItemTopEdge;
-            
             let currentPosition = -centerOffset;
             rouletteTrackList.style.transform = `translateY(${currentPosition}px)`;
-            
             const startTime = Date.now();
             const duration = 5000;
             const startPosition = currentPosition;
-            
             function animate() {
                 const elapsed = Date.now() - startTime;
                 const progress = Math.min(elapsed / duration, 1);
                 const easeOut = 1 - Math.pow(1 - progress, 4);
                 const currentPos = startPosition + (endPosition - startPosition) * easeOut;
-                
                 rouletteTrackList.style.transform = `translateY(${currentPos}px)`;
-                
                 if (progress < 1) {
                     requestAnimationFrame(animate);
                 } else {
                     finishRoulette(winnerTrack, winnerIndex);
                 }
             }
-            
             requestAnimationFrame(animate);
         }
-        
         function finishRoulette(winnerTrack, winnerIndex) {
-            console.log('🎰 Победитель рулетки:', winnerTrack.name);
+            console.log('Победитель рулетки:', winnerTrack.name);
             const winnerItems = rouletteTrackList.querySelectorAll('.roulette-track-item');
             winnerItems.forEach((item, idx) => {
                 if (idx % getCurrentTracks().length === winnerIndex) {
                     item.classList.add('winner');
                 }
             });
-            
             rouletteResult.textContent = `🎵 ${winnerTrack.name} — ${winnerTrack.artist}`;
             rouletteResult.classList.add('visible');
-            
             setTimeout(() => {
                 currentTrackIndex = winnerIndex;
                 loadTrack(currentTrackIndex);
                 audio.play().catch(e => console.warn('Play error:', e));
-                
                 setTimeout(() => {
                     rouletteWrapper.classList.remove('visible');
                     winnerItems.forEach(item => item.classList.remove('winner'));
@@ -1373,7 +1240,6 @@
                 }, 4000);
             }, 2500);
         }
-
         function toggleLoopMode() {
             const modes = ['all', 'one', 'shuffle'];
             const icons = ['🔁', '🔂', '🔀'];
@@ -1383,13 +1249,11 @@
             loopBtn.textContent = icons[nextIndex];
             loopBtn.title = `Режим: ${loopMode === 'all' ? 'Повтор всех' : loopMode === 'one' ? 'Повтор одного' : 'Перемешивание'}`;
         }
-
         function addToHistory(track) {
             history.unshift({ name: track.name, artist: track.artist, src: track.src });
             if (history.length > 10) history.pop();
             renderHistory();
         }
-
         function renderHistory() {
             historyListEl.innerHTML = '';
             history.forEach((track, index) => {
@@ -1404,7 +1268,6 @@
                 historyListEl.appendChild(item);
             });
         }
-
         function cycleTheme() {
             currentThemeIndex = (currentThemeIndex + 1) % themes.length;
             const theme = themes[currentThemeIndex];
@@ -1420,7 +1283,6 @@
             currentTrackIndex = 0;
             renderTrackList();
         });
-
         tabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const tab = btn.dataset.tab;
@@ -1450,14 +1312,13 @@
                 konamiIndex++;
                 if (konamiIndex === konamiCode.length) {
                     secretUnlocked = true;
-                    alert('🎉 СЕКРЕТНЫЙ ТРЕК РАЗБЛОКИРОВАН!');
+                    alert('СЕКРЕТНЫЙ ТРЕК РАЗБЛОКИРОВАН!');
                     renderTrackList();
                     konamiIndex = 0;
                 }
             } else {
                 konamiIndex = 0;
             }
-
             if (e.target.tagName === 'INPUT') return;
             switch(e.code) {
                 case 'Space': e.preventDefault(); togglePlay(); break;
@@ -1470,25 +1331,22 @@
                 case 'KeyL': toggleLoopMode(); break;
             }
         });
-
         titleText.addEventListener('click', () => {
             titleClickCount++;
             if (titleClickCount >= 10) {
                 secretUnlocked = true;
-                alert('🎉 СЕКРЕТНЫЙ ТРЕК РАЗБЛОКИРОВАН!');
+                alert('СЕКРЕТНЫЙ ТРЕК РАЗБЛОКИРОВАН!');
                 renderTrackList();
                 titleClickCount = 0;
             }
             setTimeout(() => titleClickCount = 0, 2000);
         });
-
         document.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
         document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
         document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
-
         document.addEventListener('click', (e) => {
             const ripple = document.createElement('div');
             ripple.className = 'ripple';
@@ -1499,12 +1357,10 @@
             document.body.appendChild(ripple);
             setTimeout(() => ripple.remove(), 600);
         });
-
         historyBtn.addEventListener('click', () => historyPanel.classList.toggle('visible'));
         themeBtn.addEventListener('click', cycleTheme);
         rouletteBtn.addEventListener('click', startRoulette);
         loopBtn.addEventListener('click', toggleLoopMode);
-
         audio.addEventListener('ended', nextTrack);
         playBtn.addEventListener('click', togglePlay);
         audio.addEventListener('timeupdate', updateProgress);
@@ -1512,7 +1368,6 @@
         progressContainer.addEventListener('click', setProgress);
         prevBtn.addEventListener('click', prevTrack);
         nextBtn.addEventListener('click', nextTrack);
-
         async function init() {
             await playHackEffect();
             audio.volume = volume;
@@ -1524,7 +1379,6 @@
             quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
             drawVisualizer();
         }
-
         init();
     </script>
 </body>
